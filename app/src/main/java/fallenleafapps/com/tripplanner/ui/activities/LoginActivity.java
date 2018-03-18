@@ -1,6 +1,9 @@
 package fallenleafapps.com.tripplanner.ui.activities;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +15,8 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fallenleafapps.com.tripplanner.R;
+import fallenleafapps.com.tripplanner.database.DatabaseContract;
+import fallenleafapps.com.tripplanner.database.DatabaseHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -40,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
                 String email=inputEmail.getText().toString();
                 String password=inputPassword.getText().toString();
                 Log.i("user",email+":"+password);
+
                 startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                 finish();
             }
