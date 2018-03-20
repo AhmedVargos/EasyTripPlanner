@@ -23,12 +23,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/image_background"
-                android:src="@drawable/tripImage"
+                android:src="@drawable/tripimage"
                 android:scaleType="centerCrop"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:transitionName="selectedMovie" />
+                android:layout_alignParentStart="true" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -82,26 +81,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/item_trip_start"
-                android:background="@android:color/transparent"
+                android:background="@color/colorPrimary"
                 android:text="Start"
                 android:textAllCaps="false"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textSize="16sp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="100dp"
                 android:layout_below="@id/item_trip_date"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/item_trip_cancel"
-                android:background="@android:color/transparent"
+                android:background="@color/red"
                 android:text="Cancel"
                 android:textAllCaps="false"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textSize="16sp"
+                android:layout_margin="8dp"
                 android:layout_below="@id/item_trip_date"
-                android:layout_alignParentEnd="true"/>
+                android:layout_toEndOf="@id/item_trip_start"/>
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
