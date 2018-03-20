@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupViewPager() {
-        TabsAdapter tabsAdapter = new TabsAdapter(getFragmentManager());
+        TabsAdapter tabsAdapter = new TabsAdapter(getChildFragmentManager());
         UpcomingTripsFragment upcomingTripsFragment = new UpcomingTripsFragment();
         PastTripsFragment pastTripsFragment = new PastTripsFragment();
         tabsAdapter.addFragment(upcomingTripsFragment, "Upcoming");
@@ -48,6 +48,7 @@ public class HomeFragment extends Fragment {
         fragmentHomeViewPager.setAdapter(tabsAdapter);
         fragmentHomeTabLayout.setupWithViewPager(fragmentHomeViewPager);
         fragmentHomeTabLayout.setBackgroundColor(getResources().getColor(R.color.gray_300));
+        fragmentHomeViewPager.setCurrentItem(0);
     }
 
     @Override

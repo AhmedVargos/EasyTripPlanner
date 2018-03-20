@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingTop="2dp">
 
     <android.support.v7.widget.CardView
@@ -22,7 +22,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/image_background"
+                android:id="@+id/item_trip_image_background"
                 android:src="@drawable/tripimage"
                 android:scaleType="centerCrop"
                 android:layout_alignParentBottom="true"
@@ -37,14 +37,14 @@
                 android:background="@android:color/transparent"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="8dp"/>
-            <view
+            <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="140dp"
                 android:id="@+id/line_view" />
             <View
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="60dp"
                 android:id="@+id/view_blacklayer"
                 android:background="#000000"
                 android:alpha="0.4"
@@ -90,22 +90,9 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginStart="100dp"
-                android:layout_below="@id/item_trip_date"/>
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"/>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/item_trip_cancel"
-                android:background="@color/red"
-                android:text="Cancel"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_margin="8dp"
-                android:layout_below="@id/item_trip_date"
-                android:layout_toEndOf="@id/item_trip_start"/>
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
