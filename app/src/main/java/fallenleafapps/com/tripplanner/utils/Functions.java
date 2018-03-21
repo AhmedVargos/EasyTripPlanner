@@ -2,9 +2,11 @@ package fallenleafapps.com.tripplanner.utils;
 
 import android.app.Activity;
 import android.app.WallpaperManager;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.RectF;
+import android.net.ConnectivityManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.DisplayMetrics;
@@ -15,6 +17,7 @@ import fallenleafapps.com.tripplanner.R;
 
 public class Functions {
 
+    //Used to change the main fragment in the activity.
     public static void changeMainFragment(FragmentActivity fragmentActivity, Fragment fragment){
         fragmentActivity.getSupportFragmentManager()
                 .beginTransaction()
@@ -24,6 +27,49 @@ public class Functions {
 
 
 
+
+    //Check if there are internet connection any type.
+    public static boolean isInternetConnected(Context context) {
+        ConnectivityManager connec = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        android.net.NetworkInfo wifi = connec.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        android.net.NetworkInfo mobile = connec.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        // Here if condition check for wifi and mobile network is available or not.
+        // If anyone of them is available or connected then it will return true,
+        // otherwise false;
+
+        if (wifi != null && wifi.isConnected()) {
+            return true;
+        } else if (mobile != null && mobile.isConnected()) {
+            return true;
+        }
+        return false;
+    }
+
+    //Check if there are internet connection WIFI.
+    public static boolean isWifiConnected(Context context) {
+        ConnectivityManager connec = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        android.net.NetworkInfo wifi = connec.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        if (wifi != null && wifi.isConnected()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    //Check if there are internet connection Data.
+    public static boolean isMobileDataConnected(Context context) {
+        ConnectivityManager connec = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        android.net.NetworkInfo mobile = connec.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        if (mobile != null && mobile.isConnected()) {
+            return true;
+        }
+
+        return false;
+    }
+    //Used to scale a bitmap with code.
     public static Bitmap scaleCenterCrop(Bitmap source, int newHeight, int newWidth) {
         int sourceWidth = source.getWidth();
         int sourceHeight = source.getHeight();
