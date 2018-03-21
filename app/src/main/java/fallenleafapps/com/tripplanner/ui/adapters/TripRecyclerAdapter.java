@@ -10,6 +10,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.dd.morphingbutton.MorphingButton;
+
 import java.util.Date;
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class TripRecyclerAdapter extends RecyclerView.Adapter<TripRecyclerAdapte
     }
 
     @Override
-    public void onBindViewHolder(TripViewHolder holder, int position) {
+    public void onBindViewHolder(final TripViewHolder holder, int position) {
         final TripClassModel tripClassModel = tripsList.get(position);
         if (type != 0){
             holder.startTrip.setVisibility(View.GONE);
@@ -53,7 +55,7 @@ public class TripRecyclerAdapter extends RecyclerView.Adapter<TripRecyclerAdapte
             @Override
             public void onClick(View view) {
                 try {
-                    tripCardListener.startTrip(tripClassModel);
+                    tripCardListener.startTrip(tripClassModel,holder.startTrip);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -85,8 +87,7 @@ public class TripRecyclerAdapter extends RecyclerView.Adapter<TripRecyclerAdapte
         ImageButton deleteTrip;
         TextView tripTitle;
         TextView tripDate;
-        Button startTrip;
-
+        MorphingButton startTrip;
         public TripViewHolder(View itemView) {
             super(itemView);
 

@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.dd.morphingbutton.MorphingButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +70,7 @@ public class PastTripsFragment extends Fragment implements TripCardListener {
     }
 
     @Override
-    public void startTrip(TripClassModel trip) throws Exception {
+    public void startTrip(TripClassModel trip, MorphingButton morphingButton) throws Exception {
         throw  new Exception("Not implemented for the past trips");
     }
 }

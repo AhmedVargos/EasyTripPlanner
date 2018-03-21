@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.dd.morphingbutton.MorphingButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,8 +72,15 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     }
 
     @Override
-    public void startTrip(TripClassModel trip) {
-        Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
-
+    public void startTrip(TripClassModel trip, MorphingButton morphingButton) {
+        MorphingButton.Params circle = MorphingButton.Params.create()
+                .duration(500)
+                .cornerRadius(112) // 56 dp
+                .width(112) // 56 dp
+                .height(112) // 56 dp
+                .color(getResources().getColor(R.color.colorAccent)) // normal state color
+                .colorPressed(getResources().getColor(R.color.colorPrimaryDark)) // pressed state color
+                .icon(R.drawable.ic_done_white_24dp); // icon
+        morphingButton.morph(circle);
     }
 }
