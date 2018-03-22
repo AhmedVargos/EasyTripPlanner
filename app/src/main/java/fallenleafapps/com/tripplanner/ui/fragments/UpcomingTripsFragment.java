@@ -1,9 +1,12 @@
 package fallenleafapps.com.tripplanner.ui.fragments;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +20,17 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import design.ivisionblog.apps.reviewdialoglibrary.FeedBackActionsListeners;
+import design.ivisionblog.apps.reviewdialoglibrary.FeedBackDialog;
 import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.models.TripClassModel;
+import fallenleafapps.com.tripplanner.ui.activities.TripDialogActivity;
 import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
 import fallenleafapps.com.tripplanner.ui.adapters.TripRecyclerAdapter;
 
 public class UpcomingTripsFragment extends Fragment implements TripCardListener {
 
+    private static final String LOG_TAG = "HOME FRAGMENT";
     @BindView(R.id.fragment_home_recycler)
     RecyclerView fragmentHomeRecycler;
     Unbinder unbinder;
@@ -80,7 +87,10 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
                 .height(112) // 56 dp
                 .color(getResources().getColor(R.color.colorAccent)) // normal state color
                 .colorPressed(getResources().getColor(R.color.colorPrimaryDark)) // pressed state color
-                .icon(R.drawable.ic_done_white_24dp); // icon
+                .icon(R.drawable.ic_navigation_black_24dp); // icon
         morphingButton.morph(circle);
+        Intent intent = new Intent(getActivity(), TripDialogActivity.class);
+        intent.putExtra("TRIP_NAME",trip.getTripName());
+        startActivity(intent);
     }
 }

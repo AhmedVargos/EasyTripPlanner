@@ -41,6 +41,8 @@ dependencies {
     //noinspection GradleDependency
     compile 'com.github.bumptech.glide:glide:3.6.1'
 
+    //Dialog lib
+    compile 'design.ivisionblog.apps:feedback-dialog:0.0.1-alpha'
     //M.Hisham  Section
 
     //Youmna Section
