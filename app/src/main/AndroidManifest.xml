@@ -31,10 +31,14 @@
             android:name=".ui.services.TripIntentService"
             android:exported="false"/>
 
-        <receiver android:name=".ui.broadcastReceiver.BootReceiver" android:enabled="false">
+        <receiver android:name=".ui.broadcastReceiver.BootReceiver" android:enabled="false" android:directBootAware="true">
             <intent-filter>
-                <action
-                    android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <!-- For pre-Nougat devices -->
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <!-- For MIUI devices -->
+                <action android:name="android.intent.action.REBOOT" />
             </intent-filter>
         </receiver>
     </application>
