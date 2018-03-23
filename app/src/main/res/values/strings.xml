@@ -3,7 +3,7 @@
 
 
     //A.Ehab
-
+    <string name="google_maps_key">AIzaSyBU8SWOXzIQXn0I6SxP62Ogjru7_40Pmm4</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -15,6 +15,7 @@
     <string name="str_yes">Yes</string>
     <string name="str_no">No</string>
     <string name="str_not_now">Not Now</string>
+
 
 
     //M.Hisham Section
