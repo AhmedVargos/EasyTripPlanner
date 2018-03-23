@@ -41,4 +41,6 @@ dependencies {
     //M.Hisham  Section
 
     //Youmna Section
+    compile 'com.android.support:palette-v7:26.1.0'
+    compile 'com.aurelhubert:ahbottomnavigation:2.1.0'
 }
