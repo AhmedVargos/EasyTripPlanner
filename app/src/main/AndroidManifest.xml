@@ -3,6 +3,9 @@
     package="fallenleafapps.com.tripplanner">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:allowBackup="true"
@@ -19,9 +22,21 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activities.HomeActivity" />
-        <activity android:name=".ui.activities.TripDialogActivity"
-            android:theme="@style/CustomDialogActivity"
-            android:excludeFromRecents="true"/>
+        <activity
+            android:name=".ui.activities.TripDialogActivity"
+            android:excludeFromRecents="true"
+            android:theme="@style/CustomDialogActivity"/>
+
+        <service
+            android:name=".ui.services.TripIntentService"
+            android:exported="false"/>
+
+        <receiver android:name=".ui.broadcastReceiver.BootReceiver" android:enabled="false">
+            <intent-filter>
+                <action
+                    android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -24,9 +24,11 @@ import design.ivisionblog.apps.reviewdialoglibrary.FeedBackActionsListeners;
 import design.ivisionblog.apps.reviewdialoglibrary.FeedBackDialog;
 import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.models.TripClassModel;
+import fallenleafapps.com.tripplanner.ui.activities.HomeActivity;
 import fallenleafapps.com.tripplanner.ui.activities.TripDialogActivity;
 import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
 import fallenleafapps.com.tripplanner.ui.adapters.TripRecyclerAdapter;
+import fallenleafapps.com.tripplanner.utils.Functions;
 
 public class UpcomingTripsFragment extends Fragment implements TripCardListener {
 
@@ -89,8 +91,6 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
                 .colorPressed(getResources().getColor(R.color.colorPrimaryDark)) // pressed state color
                 .icon(R.drawable.ic_navigation_black_24dp); // icon
         morphingButton.morph(circle);
-        Intent intent = new Intent(getActivity(), TripDialogActivity.class);
-        intent.putExtra("TRIP_NAME",trip.getTripName());
-        startActivity(intent);
+        Functions.scheduleAlarm(getContext(), trip.getTripName());
     }
 }

@@ -19,6 +19,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,7 +33,6 @@ public class CustomTripDialog {
     @ColorRes
     private int mIconColor;
 
-    @StringRes
     private String mTitle;
 
     @DrawableRes
@@ -91,6 +91,7 @@ public class CustomTripDialog {
         this.mContext = mContext;
 
         mDialog = new Dialog(mContext, design.ivisionblog.apps.reviewdialoglibrary.R.style.FeedbackDialog_Theme_Dialog);
+        //mDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_PANEL);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDialog.setContentView(design.ivisionblog.apps.reviewdialoglibrary.R.layout.review_dialog_base);
 
