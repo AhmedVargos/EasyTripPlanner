@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1041402553587",
+    "firebase_url": "https://easytripplanner-619a9.firebaseio.com",
+    "project_id": "easytripplanner-619a9",
+    "storage_bucket": "easytripplanner-619a9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041402553587:android:e661990a52ca31b3",
+        "android_client_info": {
+          "package_name": "fallenleafapps.com.tripplanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1041402553587-9u86q53q7c3enn0lc6u6llh33nkk1brl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAPBtZD0zdnq3Gd0j6WoqyGvgLJSCKvZ8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
