@@ -1,12 +1,9 @@
 package fallenleafapps.com.tripplanner.ui.fragments;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +17,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import design.ivisionblog.apps.reviewdialoglibrary.FeedBackActionsListeners;
-import design.ivisionblog.apps.reviewdialoglibrary.FeedBackDialog;
 import fallenleafapps.com.tripplanner.R;
-import fallenleafapps.com.tripplanner.models.TripClassModel;
-import fallenleafapps.com.tripplanner.ui.activities.HomeActivity;
-import fallenleafapps.com.tripplanner.ui.activities.TripDialogActivity;
+import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
 import fallenleafapps.com.tripplanner.ui.adapters.TripRecyclerAdapter;
 import fallenleafapps.com.tripplanner.utils.Functions;
@@ -53,11 +46,11 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     }
 
     private void setupRecycler() {
-        List<TripClassModel> tripClassModels = new ArrayList<>();
-        tripClassModels.add(new TripClassModel("Go to cairo",(long)1521565022,(long)1522166222,"6 October","Cairo",true,1));
-        tripClassModels.add(new TripClassModel("Go to Giza",(long)1521565022,(long)1522166222,"6 October","Cairo",true,1));
+        List<TripModel> tripModels = new ArrayList<>();
+        tripModels.add(new TripModel("Go to cairo",(long)1521565022,(long)1522166222,"6 October","Cairo",true,1));
+        tripModels.add(new TripModel("Go to Giza",(long)1521565022,(long)1522166222,"6 October","Cairo",true,1));
 
-        TripRecyclerAdapter tripRecyclerAdapter = new TripRecyclerAdapter(getActivity(),tripClassModels,this,0);
+        TripRecyclerAdapter tripRecyclerAdapter = new TripRecyclerAdapter(getActivity(), tripModels,this,0);
         fragmentHomeRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));
         fragmentHomeRecycler.setAdapter(tripRecyclerAdapter);
 
@@ -70,18 +63,18 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     }
 
     @Override
-    public void openTripDetails(TripClassModel trip) {
+    public void openTripDetails(TripModel trip) {
         Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void deleteTrip(TripClassModel trip) {
+    public void deleteTrip(TripModel trip) {
         Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
 
     }
 
     @Override
-    public void startTrip(TripClassModel trip, MorphingButton morphingButton) {
+    public void startTrip(TripModel trip, MorphingButton morphingButton) {
         MorphingButton.Params circle = MorphingButton.Params.create()
                 .duration(500)
                 .cornerRadius(112) // 56 dp

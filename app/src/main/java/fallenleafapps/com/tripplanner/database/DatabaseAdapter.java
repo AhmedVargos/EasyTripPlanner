@@ -6,7 +6,7 @@ import android.database.Cursor;
 
 import java.util.ArrayList;
 
-import fallenleafapps.com.tripplanner.models.TripClassModel;
+import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.models.UserClassModel;
 
 /**
@@ -40,7 +40,7 @@ public class DatabaseAdapter {
         databaseHelper.getWritableDatabase().insert(DatabaseContract.UserTable.tableName,null,cv);
     }
 
-    public void insertTrip(TripClassModel trip,int userId){
+    public void insertTrip(TripModel trip, int userId){
 
         ContentValues cv=new ContentValues();
         cv.put(DatabaseContract.TripTable.name,trip.getTripName());
@@ -58,8 +58,8 @@ public class DatabaseAdapter {
         databaseHelper.getWritableDatabase().insert(DatabaseContract.TripTable.tableName,null,cv);
     }
 
-    public TripClassModel getTrip(String name){
-        TripClassModel trip=null;
+    public TripModel getTrip(String name){
+        TripModel trip=null;
 
         String tripName;
         String date;
@@ -85,7 +85,7 @@ public class DatabaseAdapter {
             else{
                 type=true;
             }
-            trip=new TripClassModel(tripName,Long.parseLong(date), Long.parseLong(time), start, end, type, status);
+            trip=new TripModel(tripName,Long.parseLong(date), Long.parseLong(time), start, end, type, status);
         }
 
         return trip;
@@ -114,10 +114,10 @@ public class DatabaseAdapter {
         return user;
     }
 
-    public ArrayList<TripClassModel> getTrips(int userId){
+    public ArrayList<TripModel> getTrips(int userId){
 
-        ArrayList<TripClassModel> result=null;
-        TripClassModel trip=null;
+        ArrayList<TripModel> result=null;
+        TripModel trip=null;
 
         String tripName;
         String date;
@@ -144,7 +144,7 @@ public class DatabaseAdapter {
             else{
                 type=true;
             }
-            trip=new TripClassModel(tripName,Long.parseLong(date), Long.parseLong(time), start, end, type, status);
+            trip=new TripModel(tripName,Long.parseLong(date), Long.parseLong(time), start, end, type, status);
             result.add(trip);
         }
         return result;
