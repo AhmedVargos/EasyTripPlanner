@@ -9,11 +9,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 
 import fallenleafapps.com.tripplanner.ui.services.TripIntentService;
 import fallenleafapps.com.tripplanner.utils.FeedBackActionsListeners;
@@ -34,6 +38,30 @@ public class TripDialogActivity extends AppCompatActivity {
 
         final String tripName = getIntent().getStringExtra("TRIP_NAME");
 
+        //Wake Screen
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+
+        //Make sound
+        Uri alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+
+        if(alert == null){
+            // alert is null, using backup
+            alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+            // I can't see this ever being null (as always have a default notification)
+            // but just incase
+            if(alert == null) {
+                // alert backup is null, using 2nd backup
+                alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+            }
+        }
+
+        final Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), alert);
+        r.play();
+
         //TODO handel the change of the trip status when start or cancel is pressed
         //Start the dialog for the trip
         CustomTripDialog mDialog = new CustomTripDialog(TripDialogActivity.this)
@@ -52,6 +80,7 @@ public class TripDialogActivity extends AppCompatActivity {
                         Log.d(LOG_TAG,"positive feedback callback");
                         mNotificationManager.cancel(NOTIFICATION_ID);
                         dialog.dismiss();
+                        r.stop();
                         finish();
                     }
 
@@ -60,6 +89,7 @@ public class TripDialogActivity extends AppCompatActivity {
                         Log.d(LOG_TAG,"negative feedback callback");
                         mNotificationManager.cancel(NOTIFICATION_ID);
                         dialog.dismiss();
+                        r.stop();
                         finish();
                     }
 
@@ -68,6 +98,7 @@ public class TripDialogActivity extends AppCompatActivity {
                         Log.d(LOG_TAG,"ambiguity feedback callback");
                         makeNotification(TripDialogActivity.this,tripName);
                         dialog.dismiss();
+                        r.stop();
                         finish();
                     }
 
@@ -75,6 +106,7 @@ public class TripDialogActivity extends AppCompatActivity {
                     public void onCancelListener(DialogInterface dialog) {
                         Log.d(LOG_TAG,"feedback dialog cancel listener callback");
                         dialog.dismiss();
+                        r.stop();
                         finish();
                     }
                 })
