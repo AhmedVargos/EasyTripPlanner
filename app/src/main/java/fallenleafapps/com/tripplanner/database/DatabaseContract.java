@@ -19,6 +19,7 @@ public class DatabaseContract {
         public static String name="name";
         public static String email="email";
         public static String password="password";
+
     }
 
     public static class TripTable implements BaseColumns{
@@ -30,6 +31,9 @@ public class DatabaseContract {
         public static String time="time";
         public static String status="status";
         public static String type="type";
+        public static String userId="userId";
+        public static String startPoint="startPoint";
+        public static String endPoint="endPoint";
     }
 
 }

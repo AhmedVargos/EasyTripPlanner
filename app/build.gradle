@@ -47,6 +47,10 @@ dependencies {
     //Google maps
     compile 'com.google.android.gms:play-services-maps:12.0.0'
     //M.Hisham  Section
+    compile "com.google.firebase:firebase-core:10.2.0"
+    compile "com.google.firebase:firebase-auth:10.2.0"
+    compile "com.google.android.gms:play-services-auth:10.2.0"
 
     //Youmna Section
 }
+apply plugin: 'com.google.gms.google-services'
