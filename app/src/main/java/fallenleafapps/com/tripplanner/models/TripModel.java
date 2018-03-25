@@ -1,5 +1,8 @@
 package fallenleafapps.com.tripplanner.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +10,8 @@ import java.util.List;
  * Created by DR Gamal on 3/18/2018.
  */
 
-public class TripModel {
+public class TripModel implements Parcelable {
+    private int tripId;
     private String tripName;
     private Long tripDate;
     private Long tripTime;
@@ -48,6 +52,23 @@ public class TripModel {
         this.tripStatus = tripStatus;
         this.notes = notes;
     }
+
+    public TripModel(int tripId, String tripName, Long tripDate, Long tripTime, String startLat, String startLang, String startLocationName, String endLat, String endLang, String endLocationName, boolean tripType, int tripStatus, List<NoteModel> notes) {
+        this.tripId = tripId;
+        this.tripName = tripName;
+        this.tripDate = tripDate;
+        this.tripTime = tripTime;
+        this.startLat = startLat;
+        this.startLang = startLang;
+        this.startLocationName = startLocationName;
+        this.endLat = endLat;
+        this.endLang = endLang;
+        this.endLocationName = endLocationName;
+        this.tripType = tripType;
+        this.tripStatus = tripStatus;
+        this.notes = notes;
+    }
+
     public void addNote(NoteModel noteModel){
         notes.add(noteModel);
     }
@@ -151,4 +172,75 @@ public class TripModel {
     public void setNotes(List<NoteModel> notes) {
         this.notes = notes;
     }
+
+    protected TripModel(Parcel in) {
+        tripId = in.readInt();
+        tripName = in.readString();
+        tripDate = in.readByte() == 0x00 ? null : in.readLong();
+        tripTime = in.readByte() == 0x00 ? null : in.readLong();
+        startLat = in.readString();
+        startLang = in.readString();
+        startLocationName = in.readString();
+        endLat = in.readString();
+        endLang = in.readString();
+        endLocationName = in.readString();
+        tripType = in.readByte() != 0x00;
+        tripStatus = in.readInt();
+        if (in.readByte() == 0x01) {
+            notes = new ArrayList<NoteModel>();
+            in.readList(notes, NoteModel.class.getClassLoader());
+        } else {
+            notes = null;
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(tripId);
+        dest.writeString(tripName);
+        if (tripDate == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeLong(tripDate);
+        }
+        if (tripTime == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeLong(tripTime);
+        }
+        dest.writeString(startLat);
+        dest.writeString(startLang);
+        dest.writeString(startLocationName);
+        dest.writeString(endLat);
+        dest.writeString(endLang);
+        dest.writeString(endLocationName);
+        dest.writeByte((byte) (tripType ? 0x01 : 0x00));
+        dest.writeInt(tripStatus);
+        if (notes == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(notes);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<TripModel> CREATOR = new Parcelable.Creator<TripModel>() {
+        @Override
+        public TripModel createFromParcel(Parcel in) {
+            return new TripModel(in);
+        }
+
+        @Override
+        public TripModel[] newArray(int size) {
+            return new TripModel[size];
+        }
+    };
 }

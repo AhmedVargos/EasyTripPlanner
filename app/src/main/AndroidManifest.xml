@@ -28,6 +28,7 @@
             android:excludeFromRecents="true"
             android:theme="@style/CustomDialogActivity"/>
 
+        <activity android:name=".ui.activities.SignUpActivity"></activity>
         <service
             android:name=".ui.services.TripIntentService"
             android:exported="false"/>

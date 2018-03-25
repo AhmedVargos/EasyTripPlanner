@@ -7,7 +7,7 @@ import android.database.Cursor;
 import java.util.ArrayList;
 
 import fallenleafapps.com.tripplanner.models.TripModel;
-import fallenleafapps.com.tripplanner.models.UserClassModel;
+import fallenleafapps.com.tripplanner.models.UserModel;
 
 /**
  * Created by mohamed hesham on 3/20/2018.
@@ -30,7 +30,7 @@ public class DatabaseAdapter {
         return databaseAdapter;
     }
 
-    public void insertUser(UserClassModel user){
+    public void insertUser(UserModel user){
 
         ContentValues cv=new ContentValues();
         cv.put(DatabaseContract.UserTable.name,user.getUserName());
@@ -91,9 +91,9 @@ public class DatabaseAdapter {
         return trip;
     }
 
-    public UserClassModel getUser(String Email){
+    public UserModel getUser(String Email){
 
-        UserClassModel user=null;
+        UserModel user=null;
 
         int userId=-1;
         String name="";
@@ -108,7 +108,7 @@ public class DatabaseAdapter {
             name=cursor.getString(cursor.getColumnIndex(DatabaseContract.UserTable.name));
             email=cursor.getString(cursor.getColumnIndex(DatabaseContract.UserTable.email));
             password=cursor.getString(cursor.getColumnIndex(DatabaseContract.UserTable.password));
-            user=new UserClassModel(name,email,password);
+            user=new UserModel(name,email,password);
         }
 
         return user;
