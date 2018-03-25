@@ -1,5 +1,6 @@
 package fallenleafapps.com.tripplanner.ui.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.models.TripClassModel;
+import fallenleafapps.com.tripplanner.ui.activities.TripDetails;
 import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
 import fallenleafapps.com.tripplanner.ui.adapters.TripRecyclerAdapter;
 
@@ -63,6 +65,14 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     @Override
     public void openTripDetails(TripClassModel trip) {
         Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity(),fallenleafapps.com.tripplanner.ui.activities.TripDetails.class);
+        intent.putExtra("tripName",trip.getTripName());
+        intent.putExtra("tripStatus",trip.getTripStatus());
+        intent.putExtra("tripDate",trip.getTripTime());
+        intent.putExtra("tripTime",trip.getTripTime());
+        intent.putExtra("startPoint",trip.getStartLocation());
+        intent.putExtra("endPoint",trip.getEndLocation());
+        startActivity(intent);
     }
 
     @Override

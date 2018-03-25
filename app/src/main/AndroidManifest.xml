@@ -19,6 +19,7 @@
         </activity>
         <activity android:name=".ui.activities.HomeActivity" />
         <activity android:name=".ui.activities.TripDetails"  android:parentActivityName=".ui.activities.HomeActivity">
+
         </activity>
     </application>
 

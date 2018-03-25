@@ -5,4 +5,5 @@ package fallenleafapps.com.tripplanner.ui.adapters;
  */
 
 public class NotesAdapter {
+
 }
