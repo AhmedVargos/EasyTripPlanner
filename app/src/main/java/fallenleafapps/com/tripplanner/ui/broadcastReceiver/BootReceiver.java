@@ -16,5 +16,7 @@ public class BootReceiver extends BroadcastReceiver {
             // Set alarms
             Toast.makeText(context, "The broadcast is working", Toast.LENGTH_SHORT).show();
         }
+        Toast.makeText(context, "The broadcast is working", Toast.LENGTH_SHORT).show();
+
     }
 }
