@@ -140,13 +140,14 @@ public class LoginActivity extends AppCompatActivity {
 
     public void configureSignIn(){
         // Configure sign-in to request the user’s basic profile like name and email
-        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
          mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, null /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, options)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
                 .build();
     }
 
@@ -164,22 +165,23 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInResult task = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getSignInAccount();
-                firebaseAuthWithGoogle(account);
+                if(task.isSuccess()) {
+                    GoogleSignInAccount account = task.getSignInAccount();
+                    firebaseAuthWithGoogle(account);
+                }
             } catch (Exception e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w("hello", "Google sign in failed", e);
-                // ...
             }
         }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 
-
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+
         firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
@@ -190,8 +192,6 @@ public class LoginActivity extends AppCompatActivity {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(LoginActivity.this, "failed to sign in using g+", Toast.LENGTH_SHORT).show();
                         }
-
-                        // ...
                     }
                 });
     }
