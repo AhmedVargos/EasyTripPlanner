@@ -1,0 +1,20 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="fallenleafapps.com.tripplanner.ui.fragments.HistoryFragment">
+
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/fragment_home_tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <fallenleafapps.com.tripplanner.utils.SwipeLessFragmentPager
+        android:id="@+id/fragment_home_viewPager"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" />
+
+
+</LinearLayout>

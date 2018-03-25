@@ -22,6 +22,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:support-v4:26.1.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -35,9 +36,13 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
+    //Morphing button
+    compile 'com.github.dmytrodanylyk:android-morphing-button:98a4986e56'
     //noinspection GradleDependency
     compile 'com.github.bumptech.glide:glide:3.6.1'
 
+    //Dialog lib
+    compile 'design.ivisionblog.apps:feedback-dialog:0.0.1-alpha'
     //M.Hisham  Section
     compile "com.google.firebase:firebase-core:10.2.0"
     compile "com.google.firebase:firebase-auth:10.2.0"
