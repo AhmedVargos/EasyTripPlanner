@@ -19,7 +19,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 
+import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.ui.services.TripIntentService;
+import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
 import fallenleafapps.com.tripplanner.utils.FeedBackActionsListeners;
 import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.utils.CustomTripDialog;
@@ -36,7 +38,7 @@ public class TripDialogActivity extends AppCompatActivity {
         mNotificationManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
 
-        final String tripName = getIntent().getStringExtra("TRIP_NAME");
+        final TripModel trip = getIntent().getParcelableExtra(ConstantsVariables.TRIP_OBJ);
 
         //Wake Screen
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
@@ -68,7 +70,7 @@ public class TripDialogActivity extends AppCompatActivity {
                 .setBackgroundColor(R.color.colorPrimary)
                 .setIcon(R.drawable.ic_navigation_black_24dp)
                 .setIconColor(R.color.sampleColor)
-                .setTitle(getString(R.string.str_start_trip) + " " +tripName)
+                .setTitle(getString(R.string.str_start_trip) + " " +trip.getTripName())
                 .setDescription(R.string.str_trip_desc)
                 .setReviewQuestion(R.string.str_start_question)
                 .setPositiveFeedbackText(R.string.str_yes)
@@ -96,7 +98,7 @@ public class TripDialogActivity extends AppCompatActivity {
                     @Override
                     public void onAmbiguityFeedback(CustomTripDialog dialog) {
                         Log.d(LOG_TAG,"ambiguity feedback callback");
-                        makeNotification(TripDialogActivity.this,tripName);
+                        makeNotification(TripDialogActivity.this,trip);
                         dialog.dismiss();
                         r.stop();
                         finish();
@@ -114,15 +116,15 @@ public class TripDialogActivity extends AppCompatActivity {
     }
 
 
-    private void makeNotification(Context context, String tripName) {
+    private void makeNotification(Context context, TripModel trip) {
         Intent intent = new Intent(context, TripDialogActivity.class);
-        intent.putExtra("TRIP_NAME",tripName);
+        intent.putExtra(ConstantsVariables.TRIP_OBJ,trip);
         PendingIntent pendingIntent = PendingIntent.getActivity(context,
                 NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification.Builder builder = new Notification.Builder(context)
-                .setContentTitle("Notification Title")
-                .setContentText("Sample Notification Content")
+                .setContentTitle("Trip Time")
+                .setContentText("Your trip date has arrived.")
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))

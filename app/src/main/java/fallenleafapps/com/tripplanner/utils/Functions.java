@@ -1,9 +1,7 @@
 package fallenleafapps.com.tripplanner.utils;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.WallpaperManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -16,12 +14,11 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.DisplayMetrics;
 
-import java.io.IOException;
 import java.util.Random;
 
 import fallenleafapps.com.tripplanner.R;
+import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.ui.broadcastReceiver.BootReceiver;
 import fallenleafapps.com.tripplanner.ui.services.TripIntentService;
 
@@ -115,7 +112,7 @@ public class Functions {
         return dest;
     }
 
-
+/*
     //schedule Alarm for the trip
     public static void scheduleAlarm(Context context, String tripName) {
         AlarmManager manager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
@@ -146,11 +143,46 @@ public class Functions {
 
     }
 
+*/
 
-    public void unschedulePendingIntent(Context myContext) {
-        Intent myIntent = new Intent(myContext, TripIntentService.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(myContext, 0, myIntent, 0);
-        AlarmManager alarmManager = (AlarmManager) myContext.getSystemService(ALARM_SERVICE);
-        alarmManager.cancel(pendingIntent);
+    //schedule Alarm for the trip
+    public static void scheduleAlarm(Context context, TripModel tripModel) {
+        AlarmManager manager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(context, TripIntentService.class);
+        byte[] bytes = ParcelableUtil.marshall(tripModel);
+        intent.putExtra(ConstantsVariables.TRIP_OBJ,bytes);
+        Random r = new Random(); // make a random number of the request code
+        int min = 1, max = 10000;
+        int requestCode = r.nextInt(max - min + 1) + min;
+        PendingIntent pendingIntent = PendingIntent.getService(context, tripModel.getTripId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //TODO Schedule it with the trip real time
+        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            manager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    SystemClock.elapsedRealtime() + 5000,
+                    pendingIntent);
+        else
+            manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    SystemClock.elapsedRealtime() + 5000,
+                    pendingIntent);
+
+/*
+        //Enable the receiver to start working
+        ComponentName componentName = new ComponentName(context, BootReceiver.class);
+        PackageManager packageManager = context.getPackageManager();
+        packageManager.setComponentEnabledSetting(componentName,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, // or  COMPONENT_ENABLED_STATE_DISABLED
+                PackageManager.DONT_KILL_APP);*/
+
     }
+
+    public static void unschedulePendingIntent(Context myContext,TripModel tripModel) {
+        Intent myIntent = new Intent(myContext, TripIntentService.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(myContext, tripModel.getTripId(), myIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) myContext.getSystemService(ALARM_SERVICE);
+        if (alarmManager != null) {
+            alarmManager.cancel(pendingIntent);
+        }
+    }
+
 }

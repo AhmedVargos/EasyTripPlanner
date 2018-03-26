@@ -12,9 +12,13 @@ import android.os.Build;
 import android.util.Log;
 
 import fallenleafapps.com.tripplanner.R;
+import fallenleafapps.com.tripplanner.models.NoteModel;
+import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.ui.activities.TripDialogActivity;
+import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
 import fallenleafapps.com.tripplanner.utils.CustomTripDialog;
 import fallenleafapps.com.tripplanner.utils.FeedBackActionsListeners;
+import fallenleafapps.com.tripplanner.utils.ParcelableUtil;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -34,9 +38,11 @@ public class TripIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
 
-            String tripName = intent.getStringExtra("TRIP_NAME");
+            byte[] bytes = intent.getByteArrayExtra(ConstantsVariables.TRIP_OBJ);
+            TripModel trip = ParcelableUtil.unmarshall(bytes, TripModel.CREATOR);
+
             Intent intentDialog = new Intent(this, TripDialogActivity.class);
-            intentDialog.putExtra("TRIP_NAME",tripName);
+            intentDialog.putExtra(ConstantsVariables.TRIP_OBJ,trip);
             intentDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             startActivity(intentDialog);

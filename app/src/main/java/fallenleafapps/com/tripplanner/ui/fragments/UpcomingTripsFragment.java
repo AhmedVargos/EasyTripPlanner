@@ -1,6 +1,7 @@
 package fallenleafapps.com.tripplanner.ui.fragments;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,8 +20,8 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.models.TripModel;
-import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
 import fallenleafapps.com.tripplanner.ui.adapters.TripRecyclerAdapter;
+import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
 import fallenleafapps.com.tripplanner.utils.Functions;
 
 public class UpcomingTripsFragment extends Fragment implements TripCardListener {
@@ -29,6 +30,8 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     @BindView(R.id.fragment_home_recycler)
     RecyclerView fragmentHomeRecycler;
     Unbinder unbinder;
+    @BindView(R.id.btn_add_trip)
+    FloatingActionButton btnAddTrip;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,16 +45,27 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
         View view = inflater.inflate(R.layout.fragment_up_comming_trips, container, false);
         unbinder = ButterKnife.bind(this, view);
         setupRecycler();
+
+        btnAddTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(), "Open Add New Trip", Toast.LENGTH_SHORT).show();
+            }
+        });
         return view;
     }
 
     private void setupRecycler() {
         List<TripModel> tripModels = new ArrayList<>();
-        tripModels.add(new TripModel("Go to cairo",(long)1521565022,(long)1522166222,"6 October","Cairo",true,1));
-        tripModels.add(new TripModel("Go to Giza",(long)1521565022,(long)1522166222,"6 October","Cairo",true,1));
+        TripModel trip1 = new TripModel("Go to cairo", (long) 1521565022, (long) 1522166222, "6 October", "Cairo", true, 1);
+        trip1.setTripId(1);
+        TripModel trip2 = new TripModel("Go to Giza", (long) 1521565022, (long) 1522166222, "6 October", "Cairo", true, 1);
+        trip2.setTripId(2);
+        tripModels.add(trip1);
+        tripModels.add(trip2);
 
-        TripRecyclerAdapter tripRecyclerAdapter = new TripRecyclerAdapter(getActivity(), tripModels,this,0);
-        fragmentHomeRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));
+        TripRecyclerAdapter tripRecyclerAdapter = new TripRecyclerAdapter(getActivity(), tripModels, this, 0);
+        fragmentHomeRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         fragmentHomeRecycler.setAdapter(tripRecyclerAdapter);
 
     }
@@ -70,7 +84,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     @Override
     public void deleteTrip(TripModel trip) {
         Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
-
+        Functions.unschedulePendingIntent(getContext(),trip);
     }
 
     @Override
@@ -84,6 +98,6 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
                 .colorPressed(getResources().getColor(R.color.colorPrimaryDark)) // pressed state color
                 .icon(R.drawable.ic_navigation_black_24dp); // icon
         morphingButton.morph(circle);
-        Functions.scheduleAlarm(getContext(), trip.getTripName());
+        Functions.scheduleAlarm(getContext(), trip);
     }
 }
