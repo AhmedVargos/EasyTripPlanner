@@ -1,14 +1,23 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/gray_200"
     tools:context="fallenleafapps.com.tripplanner.ui.fragments.HistoryFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/hello_blank_fragment" />
+    <com.androidplot.pie.PieChart
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/trips_pie_chart"
+        app:backgroundColor="@color/gray_200"
+        app:titleTextSize="24sp"
+        android:layout_margin="16dp"
+        app:titleTextColor="@color/secondary_text"
+        android:padding="16dp"
+        app:borderColor="@color/gray_200"
+        app:borderThickness="0dp"
+        />
 
-</RelativeLayout>
+</LinearLayout>

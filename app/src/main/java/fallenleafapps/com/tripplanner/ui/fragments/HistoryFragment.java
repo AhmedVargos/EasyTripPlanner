@@ -44,9 +44,9 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
     @BindView(R.id.fragment_history_map)
     MapView fragmentHistoryMap;
     Unbinder unbinder;
-    GoogleMap mMap;
+    static volatile GoogleMap mMap;
     ArrayList<TripModel> userTrips;
-    private static int ployLinesCounter = 0;
+    private volatile DownloadTask downloadTask;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,7 +110,7 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
             // Getting URL to the Google Directions API
             String url = getDirectionsUrl(origin, dest);
 
-            DownloadTask downloadTask = new DownloadTask();
+            downloadTask = new DownloadTask();
 
             // Start downloading json data from Google Directions API
             downloadTask.execute(url);
@@ -130,7 +130,8 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
         //LatLng location = new LatLng(Double.parseDouble(userTrips.get(0).getStartLat()),Double.parseDouble(userTrips.get(0).getStartLat()));
         //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
         //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(userTrips.get(0).getStartLat(),Double.parseDouble(userTrips.get(0).getStartLat()), 15));
-       }
+        fragmentHistoryMap.onResume();
+    }
 
 
     /**
@@ -145,7 +146,7 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
      */
 
 
-    private class DownloadTask extends AsyncTask<String, Void, String> {
+    private static class DownloadTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... url) {
@@ -176,7 +177,7 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
     /**
      * A class to parse the Google Places in JSON format
      */
-    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
+    private static class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 
         // Parsing the data in non-ui thread
         @Override
@@ -236,12 +237,12 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
                 mMap.getUiSettings().setZoomGesturesEnabled(true);
 
             }
-            fragmentHistoryMap.onResume();
+
 
         }
     }
 
-    private String getDirectionsUrl(LatLng origin, LatLng dest) {
+    private static String getDirectionsUrl(LatLng origin, LatLng dest) {
 
         // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
@@ -252,8 +253,9 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
         // Sensor enabled
         String sensor = "sensor=false";
         String mode = "mode=driving";
+        String keyVal = "AIzaSyDmHpyqImH3LGGsXog9vw3HAI10lY6SPNI"; //Google Directions Key
         // Building the parameters to the web service
-        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode;
+        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode + "&key=" + keyVal;
 
         // Output format
         String output = "json";
@@ -268,7 +270,7 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
     /**
      * A method to download json data from url
      */
-    private String downloadUrl(String strUrl) throws IOException {
+    private static String downloadUrl(String strUrl) throws IOException {
         String data = "";
         InputStream iStream = null;
         HttpURLConnection urlConnection = null;

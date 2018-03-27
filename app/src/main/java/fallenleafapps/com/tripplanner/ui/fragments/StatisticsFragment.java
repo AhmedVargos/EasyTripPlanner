@@ -1,45 +1,63 @@
 package fallenleafapps.com.tripplanner.ui.fragments;
 
-import android.content.Context;
-import android.net.Uri;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.androidplot.pie.PieChart;
+import com.androidplot.pie.Segment;
+import com.androidplot.pie.SegmentFormatter;
+import com.androidplot.util.PixelUtils;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import fallenleafapps.com.tripplanner.R;
 
 
 public class StatisticsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-
-    public StatisticsFragment() {
-        // Required empty public constructor
-    }
+    @BindView(R.id.trips_pie_chart)
+    PieChart tripsPieChart;
+    Unbinder unbinder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_statistics, container, false);
+        View view = inflater.inflate(R.layout.fragment_statistics, container, false);
+        unbinder = ButterKnife.bind(this, view);
+
+        final float padding = PixelUtils.dpToPix(30);
+        tripsPieChart.getPie().setPadding(padding, padding, padding, padding);
+
+        int finishedTripsNum = 10; //TODO GET THE REAL NUMBER FROM DB
+        int totalTripsNum = 45; //TODO GET THE REAL NUMBER FROM DB
+        Segment segment = new Segment("Finished", finishedTripsNum);
+        Segment segment2 = new Segment("Total", totalTripsNum);
+
+        SegmentFormatter formatter = new SegmentFormatter(getActivity(),R.xml.pie_char_font_style);
+        SegmentFormatter formatter2 = new SegmentFormatter(getActivity(),R.xml.pie_char_font_style2);
+
+        tripsPieChart.setTitle("Finished Trips");
+        tripsPieChart.addSegment(segment, formatter);
+        tripsPieChart.addSegment(segment2, formatter2);
+        tripsPieChart.setBackgroundColor(Color.WHITE);
+
+        return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 }
