@@ -3,6 +3,11 @@
     package="fallenleafapps.com.tripplanner">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,9 +23,37 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activities.HomeActivity" />
-        <activity android:name=".ui.activities.TripDetails"  android:parentActivityName=".ui.activities.HomeActivity">
+        <activity
+            android:name=".ui.activities.TripDialogActivity"
+            android:excludeFromRecents="true"
+            android:theme="@style/CustomDialogActivity"/>
 
-        </activity>
+        <activity android:name=".ui.activities.SignUpActivity"></activity>
+        <service
+            android:name=".ui.services.TripIntentService"
+            android:exported="false"/>
+
+        <receiver android:name=".ui.broadcastReceiver.BootReceiver" android:enabled="false" android:directBootAware="true">
+            <intent-filter>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <!-- For pre-Nougat devices -->
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <!-- For MIUI devices -->
+                <action android:name="android.intent.action.REBOOT" />
+            </intent-filter>
+        </receiver>
+
+
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
     </application>
 
 </manifest>

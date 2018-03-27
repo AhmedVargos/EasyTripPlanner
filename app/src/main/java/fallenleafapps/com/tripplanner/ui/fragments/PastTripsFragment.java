@@ -18,7 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import fallenleafapps.com.tripplanner.R;
-import fallenleafapps.com.tripplanner.models.TripClassModel;
+import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.ui.adapters.TripRecyclerAdapter;
 import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
 
@@ -43,10 +43,10 @@ public class PastTripsFragment extends Fragment implements TripCardListener {
     }
 
     private void setupRecycler() {
-        List<TripClassModel> tripClassModels = new ArrayList<>();
-        tripClassModels.add(new TripClassModel("Go to cairo",(long)1521565022,(long)1522166222,"6 October","Cairo",true,1));
+        List<TripModel> tripModels = new ArrayList<>();
+        tripModels.add(new TripModel("Go to cairo",(long)1521565022,(long)1522166222,"6 October","Cairo",true,1));
 
-        TripRecyclerAdapter tripRecyclerAdapter = new TripRecyclerAdapter(getActivity(),tripClassModels,this,1);
+        TripRecyclerAdapter tripRecyclerAdapter = new TripRecyclerAdapter(getActivity(), tripModels,this,1);
         fragmentPastTripsRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));
         fragmentPastTripsRecycler.setAdapter(tripRecyclerAdapter);
 
@@ -58,19 +58,19 @@ public class PastTripsFragment extends Fragment implements TripCardListener {
     }
 
     @Override
-    public void openTripDetails(TripClassModel trip) {
+    public void openTripDetails(TripModel trip) {
         Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
 
     }
 
     @Override
-    public void deleteTrip(TripClassModel trip) {
+    public void deleteTrip(TripModel trip) {
         Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
 
     }
 
     @Override
-    public void startTrip(TripClassModel trip, MorphingButton morphingButton) throws Exception {
+    public void startTrip(TripModel trip, MorphingButton morphingButton) throws Exception {
         throw  new Exception("Not implemented for the past trips");
     }
 }

@@ -19,13 +19,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import fallenleafapps.com.tripplanner.R;
-import fallenleafapps.com.tripplanner.models.TripClassModel;
 import fallenleafapps.com.tripplanner.ui.activities.TripDetails;
+import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
 import fallenleafapps.com.tripplanner.ui.adapters.TripRecyclerAdapter;
+import fallenleafapps.com.tripplanner.utils.Functions;
 
 public class UpcomingTripsFragment extends Fragment implements TripCardListener {
 
+    private static final String LOG_TAG = "HOME FRAGMENT";
     @BindView(R.id.fragment_home_recycler)
     RecyclerView fragmentHomeRecycler;
     Unbinder unbinder;
@@ -46,11 +48,11 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     }
 
     private void setupRecycler() {
-        List<TripClassModel> tripClassModels = new ArrayList<>();
-        tripClassModels.add(new TripClassModel("Go to cairo",(long)1521565022,(long)1522166222,"6 October","Cairo",true,1));
-        tripClassModels.add(new TripClassModel("Go to Giza",(long)1521565022,(long)1522166222,"6 October","Cairo",true,1));
+        List<TripModel> tripModels = new ArrayList<>();
+        tripModels.add(new TripModel("Go to cairo",(long)1521565022,(long)1522166222,"6 October","Cairo",true,1));
+        tripModels.add(new TripModel("Go to Giza",(long)1521565022,(long)1522166222,"6 October","Cairo",true,1));
 
-        TripRecyclerAdapter tripRecyclerAdapter = new TripRecyclerAdapter(getActivity(),tripClassModels,this,0);
+        TripRecyclerAdapter tripRecyclerAdapter = new TripRecyclerAdapter(getActivity(), tripModels,this,0);
         fragmentHomeRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));
         fragmentHomeRecycler.setAdapter(tripRecyclerAdapter);
 
@@ -63,7 +65,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     }
 
     @Override
-    public void openTripDetails(TripClassModel trip) {
+    public void openTripDetails(TripModel trip) {
         Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(),fallenleafapps.com.tripplanner.ui.activities.TripDetails.class);
         intent.putExtra("tripName",trip.getTripName());
@@ -76,13 +78,13 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     }
 
     @Override
-    public void deleteTrip(TripClassModel trip) {
+    public void deleteTrip(TripModel trip) {
         Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
 
     }
 
     @Override
-    public void startTrip(TripClassModel trip, MorphingButton morphingButton) {
+    public void startTrip(TripModel trip, MorphingButton morphingButton) {
         MorphingButton.Params circle = MorphingButton.Params.create()
                 .duration(500)
                 .cornerRadius(112) // 56 dp
@@ -90,7 +92,8 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
                 .height(112) // 56 dp
                 .color(getResources().getColor(R.color.colorAccent)) // normal state color
                 .colorPressed(getResources().getColor(R.color.colorPrimaryDark)) // pressed state color
-                .icon(R.drawable.ic_done_white_24dp); // icon
+                .icon(R.drawable.ic_navigation_black_24dp); // icon
         morphingButton.morph(circle);
+        Functions.scheduleAlarm(getContext(), trip.getTripName());
     }
 }

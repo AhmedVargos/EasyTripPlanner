@@ -34,17 +34,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String UserTableQuery="CREATE TABLE "+ DatabaseContract.UserTable.tableName+" ("+
                                 DatabaseContract.UserTable.id+" INTEGER PRIMARY KEY AUTOINCREMENT , "+
                                 DatabaseContract.UserTable.name+" TEXT , "+
-                                DatabaseContract.UserTable.email+" TEXT , "+
+                                DatabaseContract.UserTable.email+" TEXT UNIQUE , "+
                                 DatabaseContract.UserTable.password+" TEXT);";
         sqLiteDatabase.execSQL(UserTableQuery);
 
         String TripTableQuery="CREATE TABLE "+ DatabaseContract.TripTable.tableName+" ("+
                 DatabaseContract.TripTable.id+" INTEGER PRIMARY KEY AUTOINCREMENT , "+
-                DatabaseContract.TripTable.name+" TEXT , "+
+                DatabaseContract.TripTable.name+" TEXT UNIQUE , "+
                 DatabaseContract.TripTable.date+" TEXT , "+
                 DatabaseContract.TripTable.time+" TEXT , "+
                 DatabaseContract.TripTable.status+" INTEGER , "+
-                DatabaseContract.TripTable.type+" INTEGER ); ";
+                DatabaseContract.TripTable.type+" INTEGER , " +
+                DatabaseContract.TripTable.userId+" INTEGER );" ;
         sqLiteDatabase.execSQL(TripTableQuery);
 
     }

@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import fallenleafapps.com.tripplanner.R;
-import fallenleafapps.com.tripplanner.models.TripClassModel;
+import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
 
 /**
@@ -25,11 +24,11 @@ import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
 
 public class TripRecyclerAdapter extends RecyclerView.Adapter<TripRecyclerAdapter.TripViewHolder>{
     Context context;
-    List<TripClassModel> tripsList;
+    List<TripModel> tripsList;
     TripCardListener tripCardListener;
     int type;
 
-    public  TripRecyclerAdapter(Context context, List<TripClassModel> tripsList,TripCardListener tripCardListener,int type){
+    public  TripRecyclerAdapter(Context context, List<TripModel> tripsList, TripCardListener tripCardListener, int type){
         this.context = context;
         this.tripsList = tripsList;
         this.tripCardListener = tripCardListener;
@@ -44,18 +43,18 @@ public class TripRecyclerAdapter extends RecyclerView.Adapter<TripRecyclerAdapte
 
     @Override
     public void onBindViewHolder(final TripViewHolder holder, int position) {
-        final TripClassModel tripClassModel = tripsList.get(position);
+        final TripModel tripModel = tripsList.get(position);
         if (type != 0){
             holder.startTrip.setVisibility(View.GONE);
         }
-        holder.tripTitle.setText(tripClassModel.getTripName());
-        holder.tripDate.setText(new Date(tripClassModel.getTripDate()).toString());
+        holder.tripTitle.setText(tripModel.getTripName());
+        holder.tripDate.setText(new Date(tripModel.getTripDate()).toString());
 
         holder.startTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    tripCardListener.startTrip(tripClassModel,holder.startTrip);
+                    tripCardListener.startTrip(tripModel,holder.startTrip);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -65,14 +64,14 @@ public class TripRecyclerAdapter extends RecyclerView.Adapter<TripRecyclerAdapte
         holder.deleteTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tripCardListener.deleteTrip(tripClassModel);
+                tripCardListener.deleteTrip(tripModel);
             }
         });
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tripCardListener.openTripDetails(tripClassModel);
+                tripCardListener.openTripDetails(tripModel);
             }
         });
     }

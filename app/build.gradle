@@ -41,9 +41,18 @@ dependencies {
     //noinspection GradleDependency
     compile 'com.github.bumptech.glide:glide:3.6.1'
 
+    //Dialog lib
+    compile 'design.ivisionblog.apps:feedback-dialog:0.0.1-alpha'
+
+    //Google maps
+    compile 'com.google.android.gms:play-services-maps:10.2.0'
     //M.Hisham  Section
+    compile "com.google.firebase:firebase-core:10.2.0"
+    compile "com.google.firebase:firebase-auth:10.2.0"
+    compile "com.google.android.gms:play-services-auth:10.2.0"
 
     //Youmna Section
     compile 'com.android.support:palette-v7:26.1.0'
     compile 'com.aurelhubert:ahbottomnavigation:2.1.0'
 }
+apply plugin: 'com.google.gms.google-services'
