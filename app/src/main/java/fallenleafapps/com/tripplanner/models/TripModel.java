@@ -69,6 +69,14 @@ public class TripModel implements Parcelable {
         this.notes = notes;
     }
 
+    public int getTripId() {
+        return tripId;
+    }
+
+    public void setTripId(int tripId) {
+        this.tripId = tripId;
+    }
+
     public void addNote(NoteModel noteModel){
         notes.add(noteModel);
     }
