@@ -7,5 +7,8 @@ package fallenleafapps.com.tripplanner.utils;
 public class ConstantsVariables {
 
     public static final String TRIP_OBJ = "TRIP_OBJ";
+    public static final String DIALOG_TYPE_WITH_MUSIC = "FROM_SERVICE";
+    public static final String DIALOG_TYPE_NO_MUSIC = "FROM_NOTIFICATION";
+    public static final String DIALOG_TYPE = "TYPE";
 
 }
