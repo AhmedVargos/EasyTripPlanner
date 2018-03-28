@@ -86,8 +86,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
         intent.putExtra("tripStatus",trip.getTripStatus());
         intent.putExtra("tripDate",trip.getTripTime());
         intent.putExtra("tripTime",trip.getTripTime());
-        intent.putExtra("startPoint",trip.getStartLocation());
-        intent.putExtra("endPoint",trip.getEndLocation());
+
         startActivity(intent);
     }
 

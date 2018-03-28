@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/gray_200"
+
 
     android:layout_height="match_parent"
     tools:context="fallenleafapps.com.tripplanner.ui.activities.TripDetails">
@@ -138,6 +140,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="Trip Date:"
+
                         android:textSize="13sp"
                         android:layout_weight="1"/>
 
@@ -252,22 +255,15 @@
 
         </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp">
+
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="horizontal" />
-
-
-        </android.support.v7.widget.CardView>
-
-
+                android:layout_height="100dp"
+                android:scrollbars="horizontal"
+                android:layout_marginStart="14dp"
+                />
 
 
     </LinearLayout>
