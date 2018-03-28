@@ -11,6 +11,9 @@ public class UserModel implements Parcelable {
     private String email;
     private String password;
 
+    public UserModel() {
+
+    }
 
     public UserModel(String userName, String email, String password) {
         this.userName = userName;

@@ -33,6 +33,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fallenleafapps.com.tripplanner.R;
+import fallenleafapps.com.tripplanner.models.UserModel;
+import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -77,8 +79,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String email=inputEmail.getText().toString();
-                String password=inputPassword.getText().toString();
+                final String email=inputEmail.getText().toString();
+                final String password=inputPassword.getText().toString();
 
                 firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -96,6 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
                             else {
                                 Toast.makeText(LoginActivity.this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+
                             }
                         }
                     }

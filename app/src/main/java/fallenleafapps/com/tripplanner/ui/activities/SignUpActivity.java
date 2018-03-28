@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -13,9 +14,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fallenleafapps.com.tripplanner.R;
+import fallenleafapps.com.tripplanner.models.NoteModel;
+import fallenleafapps.com.tripplanner.models.TripModel;
+import fallenleafapps.com.tripplanner.models.UserModel;
+import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -45,9 +52,9 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                String email=inputEmail.getText().toString().trim();
-                String password=inputPassword.getText().toString().trim();
-                String userName=inputUsername.getText().toString().trim();
+                final String email=inputEmail.getText().toString().trim();
+                final String password=inputPassword.getText().toString().trim();
+                final String userName=inputUsername.getText().toString().trim();
 
                 if(email.equals("") ){
                     Toast.makeText(SignUpActivity.this, "Email cann't be empty", Toast.LENGTH_SHORT).show();
@@ -64,6 +71,12 @@ public class SignUpActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             Toast.makeText(SignUpActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
+
+                            String userId=FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            Log.i("hello",userId);
+
+                            FirebaseHelper.getInstance(userId).addUser(new UserModel(userName,email,password),userId);
+                           // FirebaseHelper.getInstance().addTrip(new TripModel(1,"alex", 10L, 5L,"x", "y", "zxz","x1", "y1","zxz1", true, 1, new ArrayList<NoteModel>()),FirebaseAuth.getInstance().getCurrentUser().getUid());
                         }
                         else{
                             Toast.makeText(SignUpActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
