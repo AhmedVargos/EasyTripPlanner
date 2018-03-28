@@ -8,6 +8,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
+
 import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.models.UserModel;
 
@@ -32,10 +34,15 @@ public class FirebaseHelper {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 UserModel user=dataSnapshot.getValue(UserModel.class);
+                List<TripModel> trips= (List<TripModel>) dataSnapshot.child("trips").getValue(TripModel.class);
                 if(user!=null)
                     Log.i("hello","xxxxx");
                // Log.i("hello",user.getUserName());
-                System.out.print("j,jkjbjj,n,jnk,kll"+user.getEmail());
+                Log.i("hello",user.getEmail());
+
+                if(trips!=null)
+                    Log.i("hello","xssx");
+                Log.i("hello",trips.get(0).getStartLocationName());
             }
 
             @Override
@@ -57,7 +64,7 @@ public class FirebaseHelper {
     }
     public void addTrip(TripModel trip,String userId){
         String tripId=mFirebaseDatabase.push().getKey();
-        mFirebaseDatabase.child(userId).child("trips").child(tripId).setValue(trip);
+        mFirebaseDatabase.child("trips").child(tripId).setValue(trip);
     }
 
 }
