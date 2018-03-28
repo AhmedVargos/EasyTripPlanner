@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:background="@color/gray_200"
-
-
     android:layout_height="match_parent"
     tools:context="fallenleafapps.com.tripplanner.ui.activities.TripDetails">
 
@@ -92,6 +90,7 @@
                     android:orientation="horizontal"
                     android:layout_marginBottom="10dp"
                     android:weightSum="3">
+
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -102,8 +101,8 @@
                     <TextView
                         android:id="@+id/tripstatus"
                         android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="3"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
                         android:text="@string/tripStatus"
                         android:textColor="@color/black"
                         android:textSize="15sp" />
@@ -261,9 +260,7 @@
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:scrollbars="horizontal"
-                android:layout_marginStart="14dp"
-                />
+                android:scrollbars="horizontal" />
 
 
     </LinearLayout>

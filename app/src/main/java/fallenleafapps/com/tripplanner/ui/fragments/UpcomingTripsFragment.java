@@ -20,10 +20,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import fallenleafapps.com.tripplanner.R;
+import fallenleafapps.com.tripplanner.models.NoteModel;
 import fallenleafapps.com.tripplanner.ui.activities.TripDetails;
 import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.ui.adapters.TripRecyclerAdapter;
 import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
+import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
 import fallenleafapps.com.tripplanner.utils.Functions;
 
 public class UpcomingTripsFragment extends Fragment implements TripCardListener {
@@ -58,11 +60,27 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     }
 
     private void setupRecycler() {
+        ArrayList<NoteModel> noteModels = new ArrayList<>();
+        NoteModel noteModel = new NoteModel(0, "This is a note to test", false);
+        NoteModel noteModel1 = new NoteModel(1, "This is a note", false);
+        NoteModel noteModel2 = new NoteModel(2, "This is a long note so we can see the limit", false);
+        NoteModel noteModel3 = new NoteModel(2, "test test", false);
+
+        noteModels.add(noteModel);
+        noteModels.add(noteModel1);
+
+        noteModels.add(noteModel2);
+        noteModels.add(noteModel3);
+
+
         List<TripModel> tripModels = new ArrayList<>();
         TripModel trip1 = new TripModel("Go to cairo", (long) 1521565022, (long) 1522166222, "6 October", "Cairo", true, 1);
         trip1.setTripId(1);
+        trip1.setNotes(noteModels);
         TripModel trip2 = new TripModel("Go to Giza", (long) 1521565022, (long) 1522166222, "6 October", "Cairo", true, 1);
         trip2.setTripId(2);
+        trip2.setNotes(noteModels);
+
         tripModels.add(trip1);
         tripModels.add(trip2);
 
@@ -82,11 +100,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     public void openTripDetails(TripModel trip) {
         Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(),fallenleafapps.com.tripplanner.ui.activities.TripDetails.class);
-        intent.putExtra("tripName",trip.getTripName());
-        intent.putExtra("tripStatus",trip.getTripStatus());
-        intent.putExtra("tripDate",trip.getTripTime());
-        intent.putExtra("tripTime",trip.getTripTime());
-
+        intent.putExtra(ConstantsVariables.TRIP_OBJ,trip);
         startActivity(intent);
     }
 
