@@ -94,7 +94,7 @@ public class CustomTripDialog {
         //mDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_PANEL);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDialog.setContentView(design.ivisionblog.apps.reviewdialoglibrary.R.layout.review_dialog_base);
-
+        mDialog.setCanceledOnTouchOutside(false);
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
         {
             int width = (int) (mContext.getResources().getDisplayMetrics().widthPixels * 0.90);

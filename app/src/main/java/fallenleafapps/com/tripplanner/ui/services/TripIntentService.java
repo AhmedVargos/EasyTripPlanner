@@ -43,6 +43,7 @@ public class TripIntentService extends IntentService {
 
             Intent intentDialog = new Intent(this, TripDialogActivity.class);
             intentDialog.putExtra(ConstantsVariables.TRIP_OBJ,trip);
+            intentDialog.putExtra(ConstantsVariables.DIALOG_TYPE, ConstantsVariables.DIALOG_TYPE_WITH_MUSIC);
             intentDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             startActivity(intentDialog);
