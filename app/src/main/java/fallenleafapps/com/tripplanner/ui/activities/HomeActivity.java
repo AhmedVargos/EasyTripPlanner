@@ -35,7 +35,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
         setSupportActionBar(includeToolbar);
-
+        getSupportActionBar().setTitle("Home");
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -76,14 +76,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
+            getSupportActionBar().setTitle("Home");
             HomeFragment homeFragment = new HomeFragment();
             Functions.changeMainFragment(this,homeFragment);
         } else if (id == R.id.nav_statistics) {
-
+            getSupportActionBar().setTitle("Statistics");
             StatisticsFragment statisticsFragment = new StatisticsFragment();
             Functions.changeMainFragment(this,statisticsFragment);
 
         } else if (id == R.id.nav_history) {
+            getSupportActionBar().setTitle("History");
             HistoryFragment historyFragment = new HistoryFragment();
             Functions.changeMainFragment(this,historyFragment);
         }else if(id == R.id.nav_logout){

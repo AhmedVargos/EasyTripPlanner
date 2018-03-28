@@ -38,6 +38,8 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+
+
     private void setupViewPager() {
         TabsAdapter tabsAdapter = new TabsAdapter(getChildFragmentManager());
         UpcomingTripsFragment upcomingTripsFragment = new UpcomingTripsFragment();

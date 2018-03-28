@@ -48,13 +48,14 @@ public class StatisticsFragment extends Fragment {
         Segment segment = new Segment("Finished", finishedTripsNum);
         Segment segment2 = new Segment("Total", totalTripsNum);
 
+
         SegmentFormatter formatter = new SegmentFormatter(getActivity(),R.xml.pie_char_font_style);
         formatter.setOffset(32);
         SegmentFormatter formatter2 = new SegmentFormatter(getActivity(),R.xml.pie_char_font_style2);
 
         tripsPieChart.setTitle("Finished Trips");
-        tripsPieChart.addSegment(segment, formatter);
         tripsPieChart.addSegment(segment2, formatter2);
+        tripsPieChart.addSegment(segment, formatter);
         tripsPieChart.setBackgroundColor(Color.WHITE);
         return view;
     }
