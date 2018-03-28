@@ -4,6 +4,7 @@
 
     //A.Ehab
     <string name="google_maps_key">AIzaSyBU8SWOXzIQXn0I6SxP62Ogjru7_40Pmm4</string>
+    <string name="google_directions_key">AIzaSyDmHpyqImH3LGGsXog9vw3HAI10lY6SPNI</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
