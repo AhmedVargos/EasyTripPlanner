@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,7 +17,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-
 
 import org.json.JSONObject;
 
@@ -37,6 +37,7 @@ import butterknife.Unbinder;
 import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.utils.DirectionsJSONParser;
+import fallenleafapps.com.tripplanner.utils.Functions;
 
 public class HistoryFragment extends Fragment implements OnMapReadyCallback {
 
@@ -46,6 +47,8 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
     Unbinder unbinder;
     static volatile GoogleMap mMap;
     ArrayList<TripModel> userTrips;
+    @BindView(R.id.connection_container)
+    RelativeLayout connectionContainer;
     private volatile DownloadTask downloadTask;
 
     @Override
@@ -60,20 +63,28 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        userTrips = new ArrayList<>();
-        makeTempTrips();
-        //TODO query the DB for all the past trips and make lines and markers of them
-        fragmentHistoryMap.onCreate(savedInstanceState);
-        fragmentHistoryMap.getMapAsync(this);
+        if(Functions.isInternetConnected(getActivity())){
+
+            userTrips = new ArrayList<>();
+            makeTempTrips();
+            //TODO query the DB for all the past trips and make lines and markers of them
+            fragmentHistoryMap.onCreate(savedInstanceState);
+            fragmentHistoryMap.getMapAsync(this);
+
+        }else{
+
+            connectionContainer.setVisibility(View.VISIBLE);
+            fragmentHistoryMap.setVisibility(View.GONE);
+        }
 
         return view;
     }
 
     private void makeTempTrips() {
-        userTrips.add(new TripModel("First Trip",new Long(12225),new Long(42556),"30.044420", "31.235712","Cairo","30.013056", "31.208853","Giza",true,1,null));
-        userTrips.add(new TripModel("Second Trip",new Long(12225),new Long(42556),"31.200092", "29.918739","Alex","30.013056", "31.208853","Giza",true,1,null));
-        userTrips.add(new TripModel("Third Trip",new Long(12225),new Long(42556),"24.088938", "32.899829","Asuan","30.013056", "31.208853","Giza",true,1,null));
-        userTrips.add(new TripModel("Fourth Trip",new Long(12225),new Long(42556),"29.928543", "31.235712","6 October","30.013056", "31.208853","Giza",true,1,null));
+        userTrips.add(new TripModel("First Trip", new Long(12225), new Long(42556), "30.044420", "31.235712", "Cairo", "30.013056", "31.208853", "Giza", true, 1, null));
+        userTrips.add(new TripModel("Second Trip", new Long(12225), new Long(42556), "31.200092", "29.918739", "Alex", "30.013056", "31.208853", "Giza", true, 1, null));
+        userTrips.add(new TripModel("Third Trip", new Long(12225), new Long(42556), "24.088938", "32.899829", "Asuan", "30.013056", "31.208853", "Giza", true, 1, null));
+        userTrips.add(new TripModel("Fourth Trip", new Long(12225), new Long(42556), "29.928543", "31.235712", "6 October", "30.013056", "31.208853", "Giza", true, 1, null));
     }
 
     @Override
@@ -99,9 +110,9 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
                 .color(Color.RED));
 */
 
-        for (int i = 0; i < userTrips.size(); i++){
-            LatLng origin = new LatLng(Double.parseDouble(userTrips.get(i).getStartLat()),Double.parseDouble(userTrips.get(i).getStartLang()));
-            LatLng dest = new LatLng(Double.parseDouble(userTrips.get(i).getEndLat()),Double.parseDouble(userTrips.get(i).getEndLang()));
+        for (int i = 0; i < userTrips.size(); i++) {
+            LatLng origin = new LatLng(Double.parseDouble(userTrips.get(i).getStartLat()), Double.parseDouble(userTrips.get(i).getStartLang()));
+            LatLng dest = new LatLng(Double.parseDouble(userTrips.get(i).getEndLat()), Double.parseDouble(userTrips.get(i).getEndLang()));
 
             mMap.addMarker(new MarkerOptions().position(origin).title(userTrips.get(i).getStartLocationName()));
             mMap.addMarker(new MarkerOptions().position(dest).title(userTrips.get(i).getEndLocationName()));
@@ -119,12 +130,12 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
         mMap.addMarker(new MarkerOptions().position(new LatLng(40.7, -74.0)).title("Source"));
         mMap.addMarker(new MarkerOptions().position(new LatLng(34.088808,-118.40612)).title("Destination"));
 */
-        if(userTrips.size() > 0){
-            LatLng location = new LatLng(Double.parseDouble(userTrips.get(0).getStartLat()),Double.parseDouble(userTrips.get(0).getStartLang()));
+        if (userTrips.size() > 0) {
+            LatLng location = new LatLng(Double.parseDouble(userTrips.get(0).getStartLat()), Double.parseDouble(userTrips.get(0).getStartLang()));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 14));
-        }else{
+        } else {
             //Cairo Default location
-            LatLng location = new LatLng(Double.parseDouble("30.044420"),Double.parseDouble("31.235712"));
+            LatLng location = new LatLng(Double.parseDouble("30.044420"), Double.parseDouble("31.235712"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 14));
         }
         //LatLng location = new LatLng(Double.parseDouble(userTrips.get(0).getStartLat()),Double.parseDouble(userTrips.get(0).getStartLat()));
@@ -228,7 +239,7 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
                 lineOptions.geodesic(true);
 
             }
-            if(lineOptions != null){
+            if (lineOptions != null) {
 
                 // Drawing polyline in the Google Map for the i-th route
                 mMap.addPolyline(lineOptions);
