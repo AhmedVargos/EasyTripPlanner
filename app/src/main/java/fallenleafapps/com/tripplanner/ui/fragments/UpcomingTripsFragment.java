@@ -134,7 +134,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
 
     @Override
     public void deleteTrip(TripModel trip) {
-        Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
         Functions.unschedulePendingIntent(getContext(),trip);
     }
 
