@@ -37,9 +37,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fallenleafapps.com.tripplanner.R;
+import fallenleafapps.com.tripplanner.models.NoteModel;
+import fallenleafapps.com.tripplanner.models.TripModel;
+import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -201,6 +206,16 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             //Toast.makeText(LoginActivity.this, "signed in using g+", Toast.LENGTH_SHORT).show();
+
+                            TripModel trip=new TripModel(1,"alex", 10L, 5L,"x", "y", "zxz","x1", "y1","zxz1", true, 1, new ArrayList<NoteModel>());
+                            trip.addNote(new NoteModel(2,"hello this the first note",true));
+                            trip.addNote(new NoteModel(3,"hello this the second note",true));
+                            TripModel trip1=new TripModel(2,"alex", 10L, 5L,"x", "y", "zxz","x1", "y1","zxz1", true, 1, new ArrayList<NoteModel>());
+                            trip.addNote(new NoteModel(2,"hello this the first note",true));
+                            trip.addNote(new NoteModel(3,"hello this the second note",true));
+                            FirebaseHelper.getInstance().addTrip(trip,FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            FirebaseHelper.getInstance().addTrip(trip1,FirebaseAuth.getInstance().getCurrentUser().getUid());
+
                             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                             finish();
 

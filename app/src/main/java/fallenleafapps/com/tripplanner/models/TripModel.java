@@ -24,6 +24,7 @@ public class TripModel implements Parcelable {
     private boolean tripType;
     private int tripStatus;
     private List<NoteModel> notes = new ArrayList();
+    private String userId;
 
     public TripModel() {
     }
@@ -237,6 +238,13 @@ public class TripModel implements Parcelable {
             dest.writeByte((byte) (0x01));
             dest.writeList(notes);
         }
+    }
+
+    public void setUserId(String userId){
+        this.userId=userId;
+    }
+    public String getUserId(){
+        return userId;
     }
 
     @SuppressWarnings("unused")

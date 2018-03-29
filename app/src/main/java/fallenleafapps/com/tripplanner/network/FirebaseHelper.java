@@ -8,8 +8,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import fallenleafapps.com.tripplanner.models.NoteModel;
 import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.models.UserModel;
 
@@ -24,47 +26,39 @@ public class FirebaseHelper {
     private DatabaseReference mFirebaseDatabase;
     private FirebaseDatabase mFirebaseInstance;
 
-    private FirebaseHelper(String userId){
+    private ArrayList<TripModel> tripsList;
+
+    private FirebaseHelper(){
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
-        mFirebaseDatabase = mFirebaseInstance.getReference("users");
+        mFirebaseDatabase = mFirebaseInstance.getReference("data");
 
-
-        mFirebaseDatabase.child(userId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                UserModel user=dataSnapshot.getValue(UserModel.class);
-                List<TripModel> trips= (List<TripModel>) dataSnapshot.child("trips").getValue(TripModel.class);
-                if(user!=null)
-                    Log.i("hello","xxxxx");
-               // Log.i("hello",user.getUserName());
-                Log.i("hello",user.getEmail());
-
-                if(trips!=null)
-                    Log.i("hello","xssx");
-                Log.i("hello",trips.get(0).getStartLocationName());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.i("hello","failed");
-            }
-        });
     }
 
-    public static FirebaseHelper getInstance(String userId){
+    public static FirebaseHelper getInstance(){
         if(firebaseHelper==null){
-            firebaseHelper=new FirebaseHelper(userId);
+            firebaseHelper=new FirebaseHelper();
         }
         return firebaseHelper;
     }
 
-    public void addUser(UserModel user,String userId){
-       mFirebaseDatabase.child(userId).setValue(user);
+    public DatabaseReference getFirebaseDatabase(){
+        return mFirebaseDatabase;
     }
+
+    public void addUser(UserModel user,String userId){
+       mFirebaseDatabase.child("users").child(userId).setValue(user);
+    }
+
     public void addTrip(TripModel trip,String userId){
         String tripId=mFirebaseDatabase.push().getKey();
-        mFirebaseDatabase.child("trips").child(tripId).setValue(trip);
+        mFirebaseDatabase.child("trips").child(userId).child(tripId).setValue(trip);
+    }
+    public void addTrips(ArrayList<TripModel> trips,String userId){
+
+        for(TripModel t:trips){
+            addTrip(t,userId);
+        }
     }
 
 }

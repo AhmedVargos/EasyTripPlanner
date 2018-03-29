@@ -12,6 +12,11 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.dd.morphingbutton.MorphingButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +26,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.models.NoteModel;
+import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 import fallenleafapps.com.tripplanner.ui.activities.TripDetails;
 import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.ui.adapters.TripRecyclerAdapter;
@@ -37,11 +43,31 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     @BindView(R.id.btn_add_trip)
     FloatingActionButton btnAddTrip;
 
+    ArrayList<TripModel> tripsList;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
 
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        tripsList = new ArrayList<>();
+        FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+
+                    TripModel trip = dataSnapshot1.getValue(TripModel.class);
+                    tripsList.add(trip);
+                }
+            }
+        });
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

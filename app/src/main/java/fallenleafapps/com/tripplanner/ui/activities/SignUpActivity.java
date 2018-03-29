@@ -75,8 +75,8 @@ public class SignUpActivity extends AppCompatActivity {
                             String userId=FirebaseAuth.getInstance().getCurrentUser().getUid();
                             Log.i("hello",userId);
 
-                            FirebaseHelper.getInstance(userId).addUser(new UserModel(userName,email,password),userId);
-                            FirebaseHelper.getInstance(userId).addTrip(new TripModel(1,"alex", 10L, 5L,"x", "y", "zxz","x1", "y1","zxz1", true, 1, new ArrayList<NoteModel>()),FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            FirebaseHelper.getInstance().addUser(new UserModel(userName,email,password),userId);
+
                         }
                         else{
                             Toast.makeText(SignUpActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
