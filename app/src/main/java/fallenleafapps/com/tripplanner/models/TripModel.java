@@ -24,7 +24,7 @@ public class TripModel implements Parcelable {
     private boolean tripType;
     private int tripStatus;
     private List<NoteModel> notes = new ArrayList();
-    private String userId;
+    private String tripFirebaseId;
 
     public TripModel() {
     }
@@ -68,6 +68,23 @@ public class TripModel implements Parcelable {
         this.tripType = tripType;
         this.tripStatus = tripStatus;
         this.notes = notes;
+    }
+
+    public TripModel(int tripId, String tripName, Long tripDate, Long tripTime, String startLat, String startLang, String startLocationName, String endLat, String endLang, String endLocationName, boolean tripType, int tripStatus, List<NoteModel> notes, String tripFirebaseId) {
+        this.tripId = tripId;
+        this.tripName = tripName;
+        this.tripDate = tripDate;
+        this.tripTime = tripTime;
+        this.startLat = startLat;
+        this.startLang = startLang;
+        this.startLocationName = startLocationName;
+        this.endLat = endLat;
+        this.endLang = endLang;
+        this.endLocationName = endLocationName;
+        this.tripType = tripType;
+        this.tripStatus = tripStatus;
+        this.notes = notes;
+        this.tripFirebaseId = tripFirebaseId;
     }
 
     public int getTripId() {
@@ -182,6 +199,17 @@ public class TripModel implements Parcelable {
         this.notes = notes;
     }
 
+
+
+    public String getTripFirebaseId() {
+        return tripFirebaseId;
+    }
+
+    public void setTripFirebaseId(String tripFirebaseId) {
+        this.tripFirebaseId = tripFirebaseId;
+    }
+
+
     protected TripModel(Parcel in) {
         tripId = in.readInt();
         tripName = in.readString();
@@ -201,6 +229,7 @@ public class TripModel implements Parcelable {
         } else {
             notes = null;
         }
+        tripFirebaseId = in.readString();
     }
 
     @Override
@@ -238,13 +267,7 @@ public class TripModel implements Parcelable {
             dest.writeByte((byte) (0x01));
             dest.writeList(notes);
         }
-    }
-
-    public void setUserId(String userId){
-        this.userId=userId;
-    }
-    public String getUserId(){
-        return userId;
+        dest.writeString(tripFirebaseId);
     }
 
     @SuppressWarnings("unused")

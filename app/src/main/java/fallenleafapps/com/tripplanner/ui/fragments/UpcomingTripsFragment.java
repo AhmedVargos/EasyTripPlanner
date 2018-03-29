@@ -44,6 +44,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     FloatingActionButton btnAddTrip;
 
     ArrayList<TripModel> tripsList;
+    private TripRecyclerAdapter tripRecyclerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
 
                     TripModel trip = dataSnapshot1.getValue(TripModel.class);
                     tripsList.add(trip);
+                    tripRecyclerAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -86,7 +88,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     }
 
     private void setupRecycler() {
-        ArrayList<NoteModel> noteModels = new ArrayList<>();
+/*        ArrayList<NoteModel> noteModels = new ArrayList<>();
         NoteModel noteModel = new NoteModel(0, "This is a note to test", false);
         NoteModel noteModel1 = new NoteModel(1, "This is a note", false);
         NoteModel noteModel2 = new NoteModel(2, "This is a long note so we can see the limit", false);
@@ -109,8 +111,8 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
 
         tripModels.add(trip1);
         tripModels.add(trip2);
-
-        TripRecyclerAdapter tripRecyclerAdapter = new TripRecyclerAdapter(getActivity(), tripModels, this, 0);
+*/
+        tripRecyclerAdapter = new TripRecyclerAdapter(getActivity(), tripsList, this, 0);
         fragmentHomeRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         fragmentHomeRecycler.setAdapter(tripRecyclerAdapter);
 
