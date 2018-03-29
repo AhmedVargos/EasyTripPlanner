@@ -218,6 +218,8 @@ public class LoginActivity extends AppCompatActivity {
                             trip2.addNote(new NoteModel(3,"hello this the second note",true));
                             FirebaseHelper.getInstance().addTrip(trip1,FirebaseAuth.getInstance().getCurrentUser().getUid());
                             FirebaseHelper.getInstance().addTrip(trip2,FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            trip2.setTripName("Go to dubai");
+                            FirebaseHelper.getInstance().updateTrip(trip2,FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                             finish();
