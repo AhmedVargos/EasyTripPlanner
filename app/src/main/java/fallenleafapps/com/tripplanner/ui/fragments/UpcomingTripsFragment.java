@@ -51,7 +51,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         tripsList = new ArrayList<>();
-        FirebaseHelper.getInstance(userId).getFirebaseDatabase().child("trips").child(userId).addValueEventListener(new ValueEventListener() {
+        FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 

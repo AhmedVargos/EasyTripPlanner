@@ -28,34 +28,16 @@ public class FirebaseHelper {
 
     private ArrayList<TripModel> tripsList;
 
-    private FirebaseHelper(String userId){
+    private FirebaseHelper(){
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
         mFirebaseDatabase = mFirebaseInstance.getReference("data");
 
-        tripsList=new ArrayList<>();
-
-        mFirebaseDatabase.child("trips").child(userId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for(DataSnapshot dataSnapshot1:dataSnapshot.getChildren()) {
-
-                    TripModel trip = dataSnapshot1.getValue(TripModel.class);
-                    tripsList.add(trip);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.i("hello","failed");
-            }
-        });
     }
 
-    public static FirebaseHelper getInstance(String userId){
+    public static FirebaseHelper getInstance(){
         if(firebaseHelper==null){
-            firebaseHelper=new FirebaseHelper(userId);
+            firebaseHelper=new FirebaseHelper();
         }
         return firebaseHelper;
     }
