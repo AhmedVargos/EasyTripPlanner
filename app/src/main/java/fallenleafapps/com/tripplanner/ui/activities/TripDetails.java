@@ -11,13 +11,11 @@ import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -64,6 +62,8 @@ public class TripDetails extends AppCompatActivity {
     int noteViewItemPosition;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.trip_type)
+    TextView tripType;
     private TripModel displayedTrip;
 
     @Override
@@ -93,11 +93,11 @@ public class TripDetails extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         String statusText;
-        switch (displayedTrip.getTripStatus()){
+        switch (displayedTrip.getTripStatus()) {
             case ConstantsVariables.TRIP_UPCOMMING_STATE:
                 statusText = ConstantsVariables.TRIP_UPCOMMING_TEXT;
                 break;
-                case ConstantsVariables.TRIP_DONE_STATE:
+            case ConstantsVariables.TRIP_DONE_STATE:
                 statusText = ConstantsVariables.TRIP_DONE_TEXT;
                 break;
             case ConstantsVariables.TRIP_CANCELD_STATE:
@@ -107,6 +107,12 @@ public class TripDetails extends AppCompatActivity {
                 statusText = "Unknown";
         }
         tripstatus.setText(statusText);
+
+        if(displayedTrip.isTripType()){
+            tripType.setText(ConstantsVariables.TRIP_TYPE_ROUND_TRIP);
+        }else{
+            tripType.setText(ConstantsVariables.TRIP_TYPE_ROUND_TRIP);
+        }
 
         tripname.setText(displayedTrip.getTripName());
 

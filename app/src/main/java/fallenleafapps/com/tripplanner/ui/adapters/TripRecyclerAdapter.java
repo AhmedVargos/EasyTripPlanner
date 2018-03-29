@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.dd.morphingbutton.MorphingButton;
 
 import java.util.Date;
@@ -49,6 +50,10 @@ public class TripRecyclerAdapter extends RecyclerView.Adapter<TripRecyclerAdapte
         }
         holder.tripTitle.setText(tripModel.getTripName());
         holder.tripDate.setText(new Date(tripModel.getTripDate()).toString());
+        Glide.with(context)
+                .load(R.drawable.tripimage)
+                .centerCrop()
+                .into(holder.tripImage);
 
         holder.startTrip.setOnClickListener(new View.OnClickListener() {
             @Override

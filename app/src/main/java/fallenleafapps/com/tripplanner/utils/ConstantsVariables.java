@@ -20,5 +20,7 @@ public class ConstantsVariables {
     public static final String TRIP_DONE_TEXT = "Done";
     public static final String TRIP_CANCELD_TEXT = "Canceled";
 
-
+    //Trip Type
+    public static final String TRIP_TYPE_SINGLE_TYME = "One Way";
+    public static final String TRIP_TYPE_ROUND_TRIP = "Round Trip";
 }
