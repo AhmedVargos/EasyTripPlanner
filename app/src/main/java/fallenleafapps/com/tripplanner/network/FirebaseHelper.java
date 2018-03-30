@@ -52,13 +52,23 @@ public class FirebaseHelper {
 
     public void addTrip(TripModel trip,String userId){
         String tripId=mFirebaseDatabase.push().getKey();
+        trip.setTripFirebaseId(tripId);
         mFirebaseDatabase.child("trips").child(userId).child(tripId).setValue(trip);
     }
+
     public void addTrips(ArrayList<TripModel> trips,String userId){
 
         for(TripModel t:trips){
             addTrip(t,userId);
         }
+    }
+
+    public void updateTrip(TripModel trip,String userId){
+        mFirebaseDatabase.child("trips").child(userId).child(trip.getTripFirebaseId()).setValue(trip);
+    }
+
+    public void deleteTrip(TripModel trip,String userId){
+        mFirebaseDatabase.child("trips").child(userId).child(trip.getTripFirebaseId()).removeValue();
     }
 
 }
