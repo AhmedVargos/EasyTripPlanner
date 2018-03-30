@@ -18,10 +18,16 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fallenleafapps.com.tripplanner.R;
+import fallenleafapps.com.tripplanner.models.UserModel;
+import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 import fallenleafapps.com.tripplanner.ui.fragments.HistoryFragment;
 import fallenleafapps.com.tripplanner.ui.fragments.HomeFragment;
 import fallenleafapps.com.tripplanner.ui.fragments.StatisticsFragment;
@@ -54,12 +60,59 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
         View header=navigationView.getHeaderView(0);
-        TextView headerName = (TextView)header.findViewById(R.id.header_user_name);
+        final TextView headerName = (TextView)header.findViewById(R.id.header_user_name);
         TextView headerMail = (TextView)header.findViewById(R.id.header_user_email);
 
         headerMail.setText(firebaseUser.getEmail());
-        headerName.setText(firebaseUser.getDisplayName());
+        if(firebaseUser.getDisplayName() != null){
+            headerName.setText(firebaseUser.getDisplayName());
+        }else{
+
+            /*
+            FirebaseHelper.getInstance().getFirebaseDatabase().child("users").child(firebaseUser.getUid()).addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    UserModel loggedUser = dataSnapshot.getValue(UserModel.class);
+                    headerName.setText(loggedUser.getUserName());
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+*/
+            FirebaseHelper.getInstance().getFirebaseDatabase().child("users").child(firebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    UserModel loggedUser = dataSnapshot.getValue(UserModel.class);
+                    headerName.setText(loggedUser.getUserName());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
 
         HomeFragment homeFragment = new HomeFragment();
         Functions.changeMainFragment(this,homeFragment);
@@ -110,6 +163,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(this, "IS logged out", Toast.LENGTH_SHORT).show();
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(HomeActivity.this,LoginActivity.class));
+            finish();
         }
         //drawerLayout.closeDrawer(GravityCompat.START);
 

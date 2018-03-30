@@ -17,7 +17,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@mipmap/ic_launcher_round" />
+        app:srcCompat="@drawable/ic_person_red_50_36dp" />
 
     <TextView
         android:layout_width="match_parent"

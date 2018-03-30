@@ -31,6 +31,7 @@ public class FirebaseHelper {
     private FirebaseHelper(){
 
         mFirebaseInstance = FirebaseDatabase.getInstance();
+        mFirebaseInstance.setPersistenceEnabled(true);
         mFirebaseDatabase = mFirebaseInstance.getReference("data");
 
     }
