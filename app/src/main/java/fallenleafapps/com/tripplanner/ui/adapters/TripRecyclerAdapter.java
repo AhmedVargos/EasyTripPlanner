@@ -21,6 +21,7 @@ import java.util.List;
 import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
+import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
 
 /**
  * Created by Vargos on 20-Mar-18.
@@ -55,6 +56,43 @@ public class TripRecyclerAdapter extends RecyclerView.Adapter<TripRecyclerAdapte
         notifyItemRemoved(pos);
         notifyItemRangeChanged(pos,tripsList.size());
     }
+    public void removeTripWithoutPos(TripModel tripModel){
+        int pos = 0;
+        for (int i=0; i < tripsList.size(); i++){
+           if( tripsList.get(i).getTripFirebaseId().equals(tripModel.getTripFirebaseId())){
+               pos = i;
+           }
+        }
+
+        tripsList.remove(pos);
+        notifyDataSetChanged();
+    }
+    public void clearListOfTrips(){
+        tripsList.clear();
+        notifyDataSetChanged();
+    }
+
+    public void changeTrip(TripModel tripModel){
+        int pos = -1;
+        for (int i=0; i < tripsList.size(); i++){
+            if( tripsList.get(i).getTripFirebaseId().equals(tripModel.getTripFirebaseId())){
+                pos = i;
+            }
+        }
+
+        if(tripModel.getTripStatus() == ConstantsVariables.TRIP_DONE_STATE){
+
+            tripsList.remove(pos);
+        }else{
+            if(pos != -1){ //To check if it's a past trip or upcoming one
+                tripsList.set(pos,tripModel);
+            }else{
+                addNewTrip(tripModel);
+            }
+        }
+
+        notifyDataSetChanged();
+    }
     @Override
     public TripViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_trip_card, parent,false);
@@ -66,6 +104,7 @@ public class TripRecyclerAdapter extends RecyclerView.Adapter<TripRecyclerAdapte
         final TripModel tripModel = tripsList.get(position);
         if (type != 0){
             holder.startTrip.setVisibility(View.GONE);
+            holder.startTrip.setEnabled(false);
         }
         holder.tripTitle.setText(tripModel.getTripName());
         holder.tripDate.setText(new Date(tripModel.getTripDate()).toString());
@@ -98,6 +137,31 @@ public class TripRecyclerAdapter extends RecyclerView.Adapter<TripRecyclerAdapte
                 tripCardListener.openTripDetails(tripModel);
             }
         });
+
+        if(tripModel.getTripStatus() == ConstantsVariables.TRIP_STARTED_STATE){
+            MorphingButton.Params circle = MorphingButton.Params.create()
+                    .duration(500)
+                    .cornerRadius(112) // 56 dp
+                    .width(112) // 56 dp
+                    .height(112) // 56 dp
+                    .color(context.getResources().getColor(R.color.colorAccent)) // normal state color
+                    .colorPressed(context.getResources().getColor(R.color.colorPrimaryDark)) // pressed state color
+                    .icon(R.drawable.ic_navigation_black_24dp); // icon
+            holder.startTrip.morph(circle);
+            holder.startTrip.setEnabled(false);
+        }else{
+            MorphingButton.Params square = MorphingButton.Params.create()
+                    .duration(10)
+                    .cornerRadius(4)
+                    .width(250)
+                    .height(112)
+                    .color(context.getResources().getColor(R.color.colorPrimary))
+                    .colorPressed(context.getResources().getColor(R.color.colorPrimaryDark))
+                    .text("Start");
+            holder.startTrip.morph(square);
+            holder.startTrip.setEnabled(true);
+
+        }
 
         if(position >lastPosition) {
 

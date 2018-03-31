@@ -13,13 +13,19 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.WindowManager;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import fallenleafapps.com.tripplanner.models.TripModel;
+import fallenleafapps.com.tripplanner.network.FirebaseHelper;
+import fallenleafapps.com.tripplanner.ui.services.FloatingWidgetService;
 import fallenleafapps.com.tripplanner.ui.services.TripIntentService;
 import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
 import fallenleafapps.com.tripplanner.utils.FeedBackActionsListeners;
@@ -31,6 +37,9 @@ public class TripDialogActivity extends AppCompatActivity {
     public static final int NOTIFICATION_ID = 201;
     NotificationManager mNotificationManager;
     private Ringtone r;
+
+    private static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
+    private TripModel trip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +61,7 @@ public class TripDialogActivity extends AppCompatActivity {
         mNotificationManager = (NotificationManager)
                 getSystemService(Context.NOTIFICATION_SERVICE);
 
-        final TripModel trip = getIntent().getParcelableExtra(ConstantsVariables.TRIP_OBJ);
+        trip = getIntent().getParcelableExtra(ConstantsVariables.TRIP_OBJ);
         final String type = getIntent().getStringExtra(ConstantsVariables.DIALOG_TYPE);
 
 
@@ -81,7 +90,7 @@ public class TripDialogActivity extends AppCompatActivity {
                 .setBackgroundColor(R.color.colorPrimary)
                 .setIcon(R.drawable.ic_navigation_black_24dp)
                 .setIconColor(R.color.sampleColor)
-                .setTitle(getString(R.string.str_start_trip) + " " +trip.getTripName())
+                .setTitle(getString(R.string.str_start_trip) + " " + trip.getTripName())
                 .setDescription(R.string.str_trip_desc)
                 .setReviewQuestion(R.string.str_start_question)
                 .setPositiveFeedbackText(R.string.str_yes)
@@ -97,6 +106,17 @@ public class TripDialogActivity extends AppCompatActivity {
                             r.stop();
                         }
                         lunchMapDirectionToLocation(trip); //TODO CHANGE THE STATUS OF THE TRIP MODEL
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(TripDialogActivity.this)) {
+                            //If the draw over permission is not available open the settings screen
+                            //to grant the permission.
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                    Uri.parse("package:" + getPackageName()));
+                            startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+                        } else {
+                            initializeView(trip);
+                        }
+
                         finish();
                     }
 
@@ -115,7 +135,7 @@ public class TripDialogActivity extends AppCompatActivity {
                     @Override
                     public void onAmbiguityFeedback(CustomTripDialog dialog) {
                         Log.d(LOG_TAG,"ambiguity feedback callback");
-                        makeNotification(TripDialogActivity.this,trip);
+                        makeNotification(TripDialogActivity.this, trip);
                         dialog.dismiss();
                         if (type.equals(ConstantsVariables.DIALOG_TYPE_WITH_MUSIC)) {
                             r.stop();
@@ -159,6 +179,11 @@ public class TripDialogActivity extends AppCompatActivity {
         Uri location = Uri.parse(URL);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
         startActivity(mapIntent);
+        //change the trip state
+        tripStarted.setTripStatus(ConstantsVariables.TRIP_STARTED_STATE);
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).child(tripStarted.getTripFirebaseId()).setValue(tripStarted);
+
     }
 
     private void makeNotification(Context context, TripModel trip) {
@@ -186,6 +211,32 @@ public class TripDialogActivity extends AppCompatActivity {
         n.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 
         mNotificationManager.notify(NOTIFICATION_ID, n);
+    }
+
+    private void initializeView(TripModel trip) {
+
+        Intent i=new Intent(TripDialogActivity.this, FloatingWidgetService.class);
+        i.putExtra(ConstantsVariables.TRIP_OBJ,trip);
+        startService(i);
+       // finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CODE_DRAW_OVER_OTHER_APP_PERMISSION) {
+            //Check if the permission is granted or not.
+            if (resultCode == RESULT_OK) {
+                initializeView(trip);
+            } else { //Permission is not available
+                Toast.makeText(this,
+                        "Draw over other app permission not available. Closing the application",
+                        Toast.LENGTH_SHORT).show();
+
+                finish();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
 }
