@@ -9,7 +9,7 @@
 
     <com.androidplot.pie.PieChart
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="400dp"
         android:id="@+id/trips_pie_chart"
         app:backgroundColor="@color/gray_200"
         app:titleTextSize="24sp"
@@ -19,5 +19,39 @@
         app:borderColor="@color/gray_200"
         app:borderThickness="0dp"
         />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="8dp"
+        android:weightSum="2"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Total Trips: "
+            android:layout_margin="8dp"
+            android:textSize="18sp"
+            android:id="@+id/stats_trip_total"
+            android:layout_weight="1"
+            android:textColor="#0288D1"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Finished Trips: "
+            android:layout_margin="8dp"
+            android:textSize="18sp"
+            android:id="@+id/stats_trip_done"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textColor="#00BCD4"
+            android:gravity="center"/>
+
+    </LinearLayout>
 
 </LinearLayout>

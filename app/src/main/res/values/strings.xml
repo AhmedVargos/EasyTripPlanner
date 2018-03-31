@@ -35,6 +35,8 @@
     ///////// 3rd card strings
     <string name="startPoint">Nozha Street</string>
     <string name="endPoint">Abbas el 3a2ad</string>
+    <string name="round_trip_str">Round Trip</string>
+
     /////// button date
     <string name="dateBtnName">Choose Date</string>
     <string name="timeBtnName">Choose Time</string>

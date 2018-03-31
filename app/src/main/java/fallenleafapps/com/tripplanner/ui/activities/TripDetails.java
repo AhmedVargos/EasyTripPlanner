@@ -5,23 +5,28 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.models.NoteModel;
+import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.ui.adapters.NotesAdapter;
+import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
 
 import static fallenleafapps.com.tripplanner.R.color.white;
 
@@ -49,7 +54,6 @@ public class TripDetails extends AppCompatActivity {
     TextView endlocation;
 
 
-
     List<NoteModel> noteModels;
     RecyclerView.LayoutManager RecyclerViewLayoutManager;
     NotesAdapter notesAdapter;
@@ -58,6 +62,9 @@ public class TripDetails extends AppCompatActivity {
     int noteViewItemPosition;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.trip_type)
+    TextView tripType;
+    private TripModel displayedTrip;
 
 
     @Override
@@ -66,10 +73,12 @@ public class TripDetails extends AppCompatActivity {
         setContentView(R.layout.activity_trip_details);
         ButterKnife.bind(this);
 
+        displayedTrip = getIntent().getParcelableExtra(ConstantsVariables.TRIP_OBJ);
+
+        noteModels = displayedTrip.getNotes();
         RecyclerViewLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(RecyclerViewLayoutManager);
 
-        AddItemsToRecyclerViewArrayList();
 
         notesAdapter = new NotesAdapter(noteModels);
         HorizontalLayout = new LinearLayoutManager(TripDetails.this, LinearLayoutManager.HORIZONTAL, false);
@@ -77,23 +86,59 @@ public class TripDetails extends AppCompatActivity {
 
         recyclerView.setAdapter(notesAdapter);
 
+        SnapHelper helper = new LinearSnapHelper();
+        helper.attachToRecyclerView(recyclerView);
 
         collapsingToolbar.setTitleEnabled(false);
-        toolbar.setTitle("Trip Details");
+        toolbar.setTitle(displayedTrip.getTripName() + " Details");
         setSupportActionBar(toolbar);
-        incomingintent = getIntent();
-        tripstatus.setText(incomingintent.getStringExtra("tripStatus"));
-        tripname.setText(incomingintent.getStringExtra("tripName"));
-        tripdate.setText(incomingintent.getStringExtra("tripDate"));
-        triptime.setText(incomingintent.getStringExtra("tripTime"));
-        startlocation.setText(incomingintent.getStringExtra("startPoint"));
-        endlocation.setText(incomingintent.getStringExtra("endPoint"));
+
+        String statusText;
+        switch (displayedTrip.getTripStatus()) {
+            case ConstantsVariables.TRIP_UPCOMMING_STATE:
+                statusText = ConstantsVariables.TRIP_UPCOMMING_TEXT;
+                break;
+            case ConstantsVariables.TRIP_DONE_STATE:
+                statusText = ConstantsVariables.TRIP_DONE_TEXT;
+                break;
+            case ConstantsVariables.TRIP_CANCELD_STATE:
+                statusText = ConstantsVariables.TRIP_CANCELD_TEXT;
+                break;
+            default:
+                statusText = "Unknown";
+        }
+        tripstatus.setText(statusText);
+
+        if(displayedTrip.isTripType()){
+            tripType.setText(ConstantsVariables.TRIP_TYPE_ROUND_TRIP);
+        }else{
+            tripType.setText(ConstantsVariables.TRIP_TYPE_ROUND_TRIP);
+        }
+
+        tripname.setText(displayedTrip.getTripName());
+
+        SimpleDateFormat formatterDate = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        String dateString = formatterDate.format(new Date(displayedTrip.getTripDate()));
+
+        SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+        String timeString = formatterTime.format(new Date(displayedTrip.getTripTime()));
+
+        tripdate.setText(dateString);
+        triptime.setText(timeString);
+
+        startlocation.setText(displayedTrip.getStartLocationName());
+        endlocation.setText(displayedTrip.getEndLocationName());
 
         //this line shows back button
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setn
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         toolbar.setTitleTextColor(getResources().getColor(white));
         AHBottomNavigationItem item1 = new AHBottomNavigationItem(getString(R.string.bottomtabfirsticon), R.drawable.ic_navigation_black_24dp);
         AHBottomNavigationItem item2 = new AHBottomNavigationItem(getString(R.string.bottomtabfourthicon), R.drawable.ic_done_black_24dp);
@@ -114,7 +159,7 @@ public class TripDetails extends AppCompatActivity {
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
                 // Do something cool here...
-                switch(position){
+                switch (position) {
 
                     case 0:
                         //start trip
@@ -142,24 +187,5 @@ public class TripDetails extends AppCompatActivity {
         });
 
     }
-    public void AddItemsToRecyclerViewArrayList(){
 
-        noteModels = new ArrayList<NoteModel>();
-        NoteModel noteModel = new NoteModel(0,"hello",false);
-        NoteModel noteModel1 = new NoteModel(1,"helloboy",false);
-        NoteModel noteModel2 = new NoteModel(2,"hellogirl",false);
-        NoteModel noteModel3 = new NoteModel(2,"hellogawgaw",false);
-        NoteModel noteModel4 = new NoteModel(2,"helloyoyo",false);
-
-        noteModels.add(noteModel);
-        noteModels.add(noteModel1);
-
-        noteModels.add(noteModel2);
-        noteModels.add(noteModel3);
-
-        noteModels.add(noteModel4);
-
-
-
-    }
 }

@@ -11,6 +11,6 @@ import fallenleafapps.com.tripplanner.models.TripModel;
 public interface TripCardListener {
 
     void openTripDetails(TripModel trip);
-    void deleteTrip(TripModel trip);
+    void deleteTrip(TripModel trip,int pos);
     void startTrip(TripModel trip, MorphingButton morphingButton) throws Exception;
 }

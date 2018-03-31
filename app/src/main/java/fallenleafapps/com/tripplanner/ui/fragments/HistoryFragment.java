@@ -17,6 +17,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 import org.json.JSONObject;
 
@@ -36,6 +40,8 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.models.TripModel;
+import fallenleafapps.com.tripplanner.network.FirebaseHelper;
+import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
 import fallenleafapps.com.tripplanner.utils.DirectionsJSONParser;
 import fallenleafapps.com.tripplanner.utils.Functions;
 
@@ -46,11 +52,39 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
     MapView fragmentHistoryMap;
     Unbinder unbinder;
     static volatile GoogleMap mMap;
-    ArrayList<TripModel> userTrips;
+    //ArrayList<TripModel> userTrips;
     @BindView(R.id.connection_container)
     RelativeLayout connectionContainer;
     private volatile DownloadTask downloadTask;
+    private String userId;
+    private ChildEventListener childEventListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            TripModel trip = dataSnapshot.getValue(TripModel.class);
+            if(trip.getTripStatus() == ConstantsVariables.TRIP_DONE_STATE ){
+                getDirectionsOnMap(trip);
+            }
+        }
 
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,11 +100,12 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
 
         if(Functions.isInternetConnected(getActivity())){
 
-            userTrips = new ArrayList<>();
-            makeTempTrips();
-            //TODO query the DB for all the past trips and make lines and markers of them
             fragmentHistoryMap.onCreate(savedInstanceState);
             fragmentHistoryMap.getMapAsync(this);
+            //userTrips = new ArrayList<>();
+            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).addChildEventListener(childEventListener);
 
         }else{
 
@@ -81,11 +116,10 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
         return view;
     }
 
-    private void makeTempTrips() {
-        userTrips.add(new TripModel("First Trip", new Long(12225), new Long(42556), "30.044420", "31.235712", "Cairo", "30.013056", "31.208853", "Giza", true, 1, null));
-        userTrips.add(new TripModel("Second Trip", new Long(12225), new Long(42556), "31.200092", "29.918739", "Alex", "30.013056", "31.208853", "Giza", true, 1, null));
-        userTrips.add(new TripModel("Third Trip", new Long(12225), new Long(42556), "24.088938", "32.899829", "Asuan", "30.013056", "31.208853", "Giza", true, 1, null));
-        userTrips.add(new TripModel("Fourth Trip", new Long(12225), new Long(42556), "29.928543", "31.235712", "6 October", "30.013056", "31.208853", "Giza", true, 1, null));
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).removeEventListener(childEventListener);
     }
 
     @Override
@@ -98,8 +132,8 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         //Disable Movement while loading
-        mMap.getUiSettings().setScrollGesturesEnabled(false);
-        mMap.getUiSettings().setZoomGesturesEnabled(false);
+        //mMap.getUiSettings().setScrollGesturesEnabled(false);
+        //mMap.getUiSettings().setZoomGesturesEnabled(false);
         /* mMap.addPolyline(new PolylineOptions()
                 .add(new LatLng(34.088808,-118.40612), new LatLng(40.7, -74.0))
                 .width(5)
@@ -111,12 +145,22 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
                 .color(Color.RED));
 */
 
-        for (int i = 0; i < userTrips.size(); i++) {
-            LatLng origin = new LatLng(Double.parseDouble(userTrips.get(i).getStartLat()), Double.parseDouble(userTrips.get(i).getStartLang()));
-            LatLng dest = new LatLng(Double.parseDouble(userTrips.get(i).getEndLat()), Double.parseDouble(userTrips.get(i).getEndLang()));
+        LatLng location = new LatLng(Double.parseDouble("30.044420"), Double.parseDouble("31.235712"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 14));
 
-            mMap.addMarker(new MarkerOptions().position(origin).title(userTrips.get(i).getStartLocationName()));
-            mMap.addMarker(new MarkerOptions().position(dest).title(userTrips.get(i).getEndLocationName()));
+        //LatLng location = new LatLng(Double.parseDouble(userTrips.get(0).getStartLat()),Double.parseDouble(userTrips.get(0).getStartLat()));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(userTrips.get(0).getStartLat(),Double.parseDouble(userTrips.get(0).getStartLat()), 15));
+        fragmentHistoryMap.onResume();
+    }
+
+    private void getDirectionsOnMap(TripModel tripModel) {
+        //for (int i = 0; i < userTrips.size(); i++) {
+            LatLng origin = new LatLng(Double.parseDouble(tripModel.getStartLat()), Double.parseDouble(tripModel.getStartLang()));
+            LatLng dest = new LatLng(Double.parseDouble(tripModel.getEndLat()), Double.parseDouble(tripModel.getEndLang()));
+
+            mMap.addMarker(new MarkerOptions().position(origin).title(tripModel.getStartLocationName()));
+            mMap.addMarker(new MarkerOptions().position(dest).title(tripModel.getEndLocationName()));
 
 
             // Getting URL to the Google Directions API
@@ -126,23 +170,19 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
 
             // Start downloading json data from Google Directions API
             downloadTask.execute(url);
-        }
+       // }
         /*
         mMap.addMarker(new MarkerOptions().position(new LatLng(40.7, -74.0)).title("Source"));
         mMap.addMarker(new MarkerOptions().position(new LatLng(34.088808,-118.40612)).title("Destination"));
 */
-        if (userTrips.size() > 0) {
-            LatLng location = new LatLng(Double.parseDouble(userTrips.get(0).getStartLat()), Double.parseDouble(userTrips.get(0).getStartLang()));
+        //if (userTrips.size() > 0) {
+            LatLng location = new LatLng(Double.parseDouble(tripModel.getStartLat()), Double.parseDouble(tripModel.getStartLang()));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 14));
-        } else {
+        //} else {
             //Cairo Default location
-            LatLng location = new LatLng(Double.parseDouble("30.044420"), Double.parseDouble("31.235712"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 14));
-        }
-        //LatLng location = new LatLng(Double.parseDouble(userTrips.get(0).getStartLat()),Double.parseDouble(userTrips.get(0).getStartLat()));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(userTrips.get(0).getStartLat(),Double.parseDouble(userTrips.get(0).getStartLat()), 15));
-        fragmentHistoryMap.onResume();
+//            LatLng location = new LatLng(Double.parseDouble("30.044420"), Double.parseDouble("31.235712"));
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 14));
+        //}
     }
 
 
@@ -245,8 +285,8 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
                 // Drawing polyline in the Google Map for the i-th route
                 mMap.addPolyline(lineOptions);
 
-                mMap.getUiSettings().setScrollGesturesEnabled(true);
-                mMap.getUiSettings().setZoomGesturesEnabled(true);
+                //mMap.getUiSettings().setScrollGesturesEnabled(true);
+                //mMap.getUiSettings().setZoomGesturesEnabled(true);
 
             }
 
