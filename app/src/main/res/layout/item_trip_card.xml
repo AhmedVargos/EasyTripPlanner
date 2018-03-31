@@ -32,10 +32,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/item_trip_delete"
-                android:src="@drawable/ic_delete_black_24dp"
+                android:src="@drawable/ic_delete_gray_24dp"
                 android:background="@android:color/transparent"
                 android:layout_alignParentEnd="true"
-                android:layout_margin="8dp"/>
+                android:layout_margin="16dp"
+                android:scaleY="2"
+                android:scaleX="2"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

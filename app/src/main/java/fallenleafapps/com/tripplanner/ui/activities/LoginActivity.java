@@ -211,7 +211,7 @@ public class LoginActivity extends AppCompatActivity {
                             //Toast.makeText(LoginActivity.this, "signed in using g+", Toast.LENGTH_SHORT).show();
 
 
-                            Random r = new Random(); // make a random number of the trip id
+                          /*  Random r = new Random(); // make a random number of the trip id
                             int min = 1, max = 62000;
                             int trip1Id = r.nextInt(max - min + 1) + min;
                             int trip2Id = r.nextInt(max - min + 1) + min;
@@ -225,7 +225,7 @@ public class LoginActivity extends AppCompatActivity {
                             trip2.addNote(new NoteModel(3,"hello this the second note",true));
                             FirebaseHelper.getInstance().addTrip(trip1,FirebaseAuth.getInstance().getCurrentUser().getUid());
                             FirebaseHelper.getInstance().addTrip(trip2,FirebaseAuth.getInstance().getCurrentUser().getUid());
-
+*/
                             startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                             finish();
 

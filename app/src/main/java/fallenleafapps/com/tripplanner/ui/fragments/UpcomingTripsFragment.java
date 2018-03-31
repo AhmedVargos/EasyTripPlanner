@@ -44,6 +44,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     @BindView(R.id.btn_add_trip)
     FloatingActionButton btnAddTrip;
 
+    private ArrayList<TripModel> tripsUpComming = new ArrayList<>();
     private boolean deleteFromDetail = false;
     private TripRecyclerAdapter tripRecyclerAdapter;
     private String userId;
@@ -54,6 +55,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
             if(trip.getTripStatus() == ConstantsVariables.TRIP_UPCOMMING_STATE || trip.getTripStatus() == ConstantsVariables.TRIP_STARTED_STATE){
                 //tripsList.add(trip);
                 tripRecyclerAdapter.addNewTrip(trip);
+                tripsUpComming.add(trip);
 
             }
         }
@@ -64,8 +66,12 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
             TripModel trip = dataSnapshot.getValue(TripModel.class);
             if (trip.getTripStatus() == ConstantsVariables.TRIP_UPCOMMING_STATE || trip.getTripStatus() == ConstantsVariables.TRIP_STARTED_STATE) {
                 tripRecyclerAdapter.changeTrip(dataSnapshot.getValue(TripModel.class));
+                if(trip.getTripStatus() == ConstantsVariables.TRIP_STARTED_STATE){
+                    deleteTripFromTheUpcomming(trip);
+                }
             } else if (trip.getTripStatus() == ConstantsVariables.TRIP_CANCELD_STATE || trip.getTripStatus() == ConstantsVariables.TRIP_DONE_STATE) {
                 tripRecyclerAdapter.removeTripWithoutPos(trip);
+                deleteTripFromTheUpcomming(trip);
             }
         }
         @Override
@@ -76,6 +82,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
                 if(trip.getTripStatus() == ConstantsVariables.TRIP_UPCOMMING_STATE || trip.getTripStatus() == ConstantsVariables.TRIP_STARTED_STATE){
                     //tripsList.add(trip);
                     tripRecyclerAdapter.removeTripWithoutPos(trip);
+                    deleteTripFromTheUpcomming(trip);
                 }
             }
         }
@@ -182,7 +189,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
         trip.setTripStatus(ConstantsVariables.TRIP_STARTED_STATE);
         FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).child(trip.getTripFirebaseId()).setValue(trip);
         Functions.scheduleAlarm(getContext(), trip);
-
+        //Functions.unScheduleAlarm(getContext(), trip);
     }
 
 
@@ -219,6 +226,16 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
 
         AlertDialog alert11 = builder1.create();
         alert11.show();
+    }
+
+    private void deleteTripFromTheUpcomming(TripModel tripModel){
+        int pos = 0;
+        for (int i=0; i < tripsUpComming.size(); i++){
+            if( tripsUpComming.get(i).getTripFirebaseId().equals(tripModel.getTripFirebaseId())){
+                pos = i;
+            }
+        }
+        tripsUpComming.remove(pos);
     }
     @Override
     public void onDestroy() {

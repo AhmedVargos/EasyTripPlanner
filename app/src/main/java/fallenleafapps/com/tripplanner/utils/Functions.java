@@ -160,15 +160,15 @@ public class Functions {
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.currentThreadTimeMillis() + 5000, pendingIntent);
+       // alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.currentThreadTimeMillis() + 5000, pendingIntent);
         //TODO Schedule it with the trip real time
         if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP,
-                    SystemClock.elapsedRealtime() + 5000,
+                    SystemClock.elapsedRealtime() + 20000,
                     pendingIntent);
         }else{
             alarmManager.set(AlarmManager.RTC_WAKEUP,
-                    SystemClock.currentThreadTimeMillis() + 5000,
+                    SystemClock.elapsedRealtime() + 20000,
                     pendingIntent);
                     }
 

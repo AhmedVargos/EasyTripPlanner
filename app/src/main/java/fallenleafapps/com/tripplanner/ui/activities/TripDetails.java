@@ -36,6 +36,7 @@ import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 import fallenleafapps.com.tripplanner.ui.adapters.NotesAdapter;
 import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
+import fallenleafapps.com.tripplanner.utils.Functions;
 
 import static fallenleafapps.com.tripplanner.R.color.white;
 
@@ -183,7 +184,7 @@ public class TripDetails extends AppCompatActivity {
         AHBottomNavigationItem item1 = new AHBottomNavigationItem(getString(R.string.bottomtabfirsticon), R.drawable.ic_navigation_black_24dp);
         AHBottomNavigationItem item2 = new AHBottomNavigationItem(getString(R.string.bottomtabfourthicon), R.drawable.ic_done_black_24dp);
         AHBottomNavigationItem item3 = new AHBottomNavigationItem(getString(R.string.bottomtabsecondicon), R.drawable.ic_edit_black_24dp);
-        AHBottomNavigationItem item4 = new AHBottomNavigationItem(getString(R.string.bottomtabthirdicon), R.drawable.ic_delete_black_24dp);
+        AHBottomNavigationItem item4 = new AHBottomNavigationItem(getString(R.string.bottomtabthirdicon), R.drawable.ic_delete_gray_24dp);
         //add items
         bottomNavigation.addItem(item1);
         bottomNavigation.addItem(item2);
@@ -265,6 +266,7 @@ public class TripDetails extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         if(action == 0){
                             FirebaseHelper.getInstance().deleteTrip(displayedTrip, userId);
+                            Functions.unschedulePendingIntent(TripDetails.this,displayedTrip);
 
                             //finish();
                         }else{

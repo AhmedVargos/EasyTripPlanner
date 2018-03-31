@@ -26,11 +26,13 @@ import com.google.firebase.database.ValueEventListener;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fallenleafapps.com.tripplanner.R;
+import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.models.UserModel;
 import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 import fallenleafapps.com.tripplanner.ui.fragments.HistoryFragment;
 import fallenleafapps.com.tripplanner.ui.fragments.HomeFragment;
 import fallenleafapps.com.tripplanner.ui.fragments.StatisticsFragment;
+import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
 import fallenleafapps.com.tripplanner.utils.Functions;
 
 
@@ -50,6 +52,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         getSupportActionBar().setTitle("Home");
 
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        //rescheduleAlerts();
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -159,8 +162,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             HistoryFragment historyFragment = new HistoryFragment();
             Functions.changeMainFragment(this,historyFragment);
         }else if(id == R.id.nav_logout){
+            removeAllAlarms();
             drawerLayout.closeDrawer(GravityCompat.START);
             Toast.makeText(this, "IS logged out", Toast.LENGTH_SHORT).show();
+            //removeAllAlarms();
+            //FirebaseHelper.getInstance().getFirebaseDatabase().
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(HomeActivity.this,LoginActivity.class));
             finish();
@@ -168,5 +174,46 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         //drawerLayout.closeDrawer(GravityCompat.START);
 
         return true;
+    }
+    private void removeAllAlarms() {
+      //TODO some how get all the upcoming trips from the list and remove it!!
+        FirebaseHelper.getInstance().getFirebaseDatabase().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                TripModel trip = dataSnapshot.getValue(TripModel.class);
+                if(trip.getTripStatus() == ConstantsVariables.TRIP_UPCOMMING_STATE || trip.getTripStatus() == ConstantsVariables.TRIP_STARTED_STATE){
+                    Functions.unschedulePendingIntent(HomeActivity.this,trip);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void rescheduleAlerts(){
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(firebaseUser != null ){
+
+            FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(firebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    TripModel trip = dataSnapshot.getValue(TripModel.class);
+                    if(trip.getTripStatus() == ConstantsVariables.TRIP_UPCOMMING_STATE){
+                        Functions.scheduleAlarm(HomeActivity.this, trip);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
     }
 }
