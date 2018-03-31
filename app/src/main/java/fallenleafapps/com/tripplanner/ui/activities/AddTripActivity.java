@@ -40,6 +40,7 @@ import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 import fallenleafapps.com.tripplanner.ui.adapters.AddingNotesAdapter;
 import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
+import fallenleafapps.com.tripplanner.utils.Functions;
 
 import static fallenleafapps.com.tripplanner.R.color.colorPrimary;
 
@@ -224,7 +225,7 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
                     recycleView.setLayoutManager(verticalLayout);
 
                     recycleView.setAdapter(addingNotesAdapter);
-
+                    noteText.setText("");
 
                 }
             }
@@ -249,24 +250,12 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
                     }
                     tripModel = new TripModel(trip1Id,tripName,correctDate ,correctTime,startLat,startLong,startLocationName,endLat,endLong,endLocationName,tripType, ConstantsVariables.TRIP_UPCOMMING_STATE,noteModels);
                     FirebaseHelper.getInstance().addTrip(tripModel, FirebaseAuth.getInstance().getCurrentUser().getUid());
-
+                    Functions.scheduleAlarm(AddTripActivity.this, tripModel);
+                    finish();
                 }
                 else{
-                    Toast.makeText(getApplicationContext(), "Choose all data please", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Fill all data please", Toast.LENGTH_SHORT).show();
                 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             }
         });
@@ -304,11 +293,16 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
     public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
         String time = hourOfDay + ":" + minute + ":" + second;
         if (flag == true) {
-            long currentTime = System.currentTimeMillis();
-            dateOne = new Date(year1, month1, day1, hourOfDay, minute, second);
-            if (currentTime == dateOne.getTime()) {
+            long currentTime = Calendar.getInstance().getTime().getTime();
+            dateOne = getDate(year1,month1,day1,hourOfDay,minute,second);
+
+            Log.e("Add trip", "onTimeSet: " + currentTime );
+            Log.e("Add trip", "Selected date " + dateOne.getTime() );
+            Log.e("Add trip", "diff : " +  (dateOne.getTime()-currentTime)  );
+
+            if (currentTime < dateOne.getTime()) {
                 //add to trip object
-                correctDate = (long) dateOne.getDate();
+                correctDate = dateOne.getTime();
                 correctTime = dateOne.getTime();
                 isTimeChosen = true;
 
@@ -322,6 +316,18 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
 
         timeBtn.setText(time);
 
+    }
+
+    public static Date getDate(int year, int month, int day, int hour, int minute, int second) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, day);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, minute);
+        cal.set(Calendar.SECOND, second);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
     }
     //////////////////////// end of date and time
 }

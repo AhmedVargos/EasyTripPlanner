@@ -79,7 +79,6 @@ public class TripDetails extends AppCompatActivity {
     private ChildEventListener childEventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            Log.e("test", "onChildAdded: " );
         }
 
         @Override
@@ -94,13 +93,11 @@ public class TripDetails extends AppCompatActivity {
 
         @Override
         public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            Log.e("test", "onChildAdded: " );
 
         }
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
-            Log.e("test", "onChildAdded: " );
 
         }
     };
@@ -184,7 +181,7 @@ public class TripDetails extends AppCompatActivity {
         AHBottomNavigationItem item1 = new AHBottomNavigationItem(getString(R.string.bottomtabfirsticon), R.drawable.ic_navigation_black_24dp);
         AHBottomNavigationItem item2 = new AHBottomNavigationItem(getString(R.string.bottomtabfourthicon), R.drawable.ic_done_black_24dp);
         AHBottomNavigationItem item3 = new AHBottomNavigationItem(getString(R.string.bottomtabsecondicon), R.drawable.ic_edit_black_24dp);
-        AHBottomNavigationItem item4 = new AHBottomNavigationItem(getString(R.string.bottomtabthirdicon), R.drawable.ic_delete_gray_24dp);
+        AHBottomNavigationItem item4 = new AHBottomNavigationItem(getString(R.string.bottomtabthirdicon), R.drawable.ic_delete_black_24dp);
         //add items
         bottomNavigation.addItem(item1);
         bottomNavigation.addItem(item2);

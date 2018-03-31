@@ -16,6 +16,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import java.time.Clock;
+import java.util.Calendar;
 import java.util.Random;
 
 import fallenleafapps.com.tripplanner.R;
@@ -149,7 +150,7 @@ public class Functions {
     //schedule Alarm for the trip
     public static void scheduleAlarm(Context context, TripModel tripModel) {
         //For the time dif
-        //long diffInMs = trpModel.getTime() - System.currentTimeMillis();
+        long diffInMs = tripModel.getTripTime() - Calendar.getInstance().getTime().getTime();
 
         Intent myIntent = new Intent(context.getApplicationContext(), TripIntentService.class);
         byte[] bytes = ParcelableUtil.marshall(tripModel);
@@ -160,15 +161,16 @@ public class Functions {
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
+        //SystemClock.elapsedRealtime()
        // alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.currentThreadTimeMillis() + 5000, pendingIntent);
         //TODO Schedule it with the trip real time
         if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP,
-                    SystemClock.elapsedRealtime() + 20000,
+            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    SystemClock.elapsedRealtime()+diffInMs,
                     pendingIntent);
         }else{
-            alarmManager.set(AlarmManager.RTC_WAKEUP,
-                    SystemClock.elapsedRealtime() + 20000,
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                    SystemClock.elapsedRealtime()+diffInMs,
                     pendingIntent);
                     }
 

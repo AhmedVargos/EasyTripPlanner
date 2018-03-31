@@ -30,6 +30,7 @@ import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.models.NoteModel;
 import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 import fallenleafapps.com.tripplanner.models.TripModel;
+import fallenleafapps.com.tripplanner.ui.activities.AddTripActivity;
 import fallenleafapps.com.tripplanner.ui.adapters.TripRecyclerAdapter;
 import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
 import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
@@ -117,7 +118,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
         btnAddTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "Open Add New Trip", Toast.LENGTH_SHORT).show();
+               /* Toast.makeText(getActivity(), "Open Add New Trip", Toast.LENGTH_SHORT).show();
                 Random r = new Random(); // make a random number of the trip id
                 int min = 1, max = 62000;
                 int trip1Id = r.nextInt(max - min + 1) + min;
@@ -131,8 +132,8 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
                 trip2.addNote(new NoteModel(2,"hello this the first note",true));
                 trip2.addNote(new NoteModel(3,"hello this the second note",true));
                 FirebaseHelper.getInstance().addTrip(trip1,FirebaseAuth.getInstance().getCurrentUser().getUid());
-                FirebaseHelper.getInstance().addTrip(trip2,FirebaseAuth.getInstance().getCurrentUser().getUid());
-
+                FirebaseHelper.getInstance().addTrip(trip2,FirebaseAuth.getInstance().getCurrentUser().getUid());*/
+               startActivity(new Intent(getActivity(), AddTripActivity.class));
             }
         });
         return view;
@@ -188,8 +189,8 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
         //TODO open the maps and start the notes widget
         trip.setTripStatus(ConstantsVariables.TRIP_STARTED_STATE);
         FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).child(trip.getTripFirebaseId()).setValue(trip);
-        Functions.scheduleAlarm(getContext(), trip);
-        //Functions.unScheduleAlarm(getContext(), trip);
+        //Functions.scheduleAlarm(getContext(), trip);
+        Functions.unschedulePendingIntent(getContext(), trip);
     }
 
 

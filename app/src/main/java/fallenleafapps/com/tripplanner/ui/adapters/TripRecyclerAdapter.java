@@ -14,9 +14,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.dd.morphingbutton.MorphingButton;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.models.TripModel;
@@ -107,7 +109,10 @@ public class TripRecyclerAdapter extends RecyclerView.Adapter<TripRecyclerAdapte
             holder.startTrip.setEnabled(false);
         }
         holder.tripTitle.setText(tripModel.getTripName());
-        holder.tripDate.setText(new Date(tripModel.getTripDate()).toString());
+        SimpleDateFormat formatterDate = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH);
+        String dateString = formatterDate.format(new Date(tripModel.getTripDate()));
+        holder.tripDate.setText(dateString);
+
         Glide.with(context)
                 .load(R.drawable.tripimage)
                 .centerCrop()
