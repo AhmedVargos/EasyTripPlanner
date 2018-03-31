@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/EasyTripPlanner.iml" filepath="$PROJECT_DIR$/EasyTripPlanner.iml" />
       <module fileurl="file://E:\ITI files\Android material\Project\EasyTripPlanner.iml" filepath="E:\ITI files\Android material\Project\EasyTripPlanner.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Project.iml" filepath="$PROJECT_DIR$/Project.iml" />
       <module fileurl="file://F:\AndroidX Projects\EasyTripPlanner\Project.iml" filepath="F:\AndroidX Projects\EasyTripPlanner\Project.iml" />
       <module fileurl="file://E:\EasyTripPlanner\Project.iml" filepath="E:\EasyTripPlanner\Project.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
