@@ -18,7 +18,6 @@
     <string name="str_not_now">Not Now</string>
 
 
-
     //M.Hisham Section
 
 
@@ -38,4 +37,8 @@
     <string name="endPoint">Abbas el 3a2ad</string>
     <string name="round_trip_str">Round Trip</string>
 
+    /////// button date
+    <string name="dateBtnName">00/00/0000</string>
+    <string name="timeBtnName">00:00:00</string>
+    <string name="addTrip">Add Trip</string>
 </resources>

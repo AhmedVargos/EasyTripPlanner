@@ -19,7 +19,12 @@
         android:largeHeap="true">
         <activity android:name=".ui.activities.SplashScreenActivity"
             android:theme="@style/SplashTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.activities.LoginActivity">
+
+        </activity>
+        <activity android:name=".ui.activities.AddTripActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,13 +32,12 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".ui.activities.LoginActivity">
 
-        </activity>
         <activity android:name=".ui.activities.HomeActivity" />
         <activity android:name=".ui.activities.TripDetails">
 
         </activity>
+
         <activity
             android:name=".ui.activities.TripDialogActivity"
             android:excludeFromRecents="true"
@@ -67,6 +71,11 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
+        <service
+            android:name="fallenleafapps.com.tripplanner.ui.services.FloatingWidgetService"
+            android:enabled="true"
+            android:exported="false" />
 
     </application>
 
