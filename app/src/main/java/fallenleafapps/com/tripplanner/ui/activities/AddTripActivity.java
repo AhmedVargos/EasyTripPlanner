@@ -4,15 +4,17 @@ package fallenleafapps.com.tripplanner.ui.activities;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
@@ -20,20 +22,26 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.models.NoteModel;
+import fallenleafapps.com.tripplanner.models.TripModel;
+import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 import fallenleafapps.com.tripplanner.ui.adapters.AddingNotesAdapter;
+import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
 
-import static fallenleafapps.com.tripplanner.R.color.colorAccent;
+import static fallenleafapps.com.tripplanner.R.color.colorPrimary;
 
 public class AddTripActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
 
@@ -41,36 +49,51 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
     TextInputEditText inputName;
     @BindView(R.id.btn_add_trip)
     Button btnAddTrip;
-    @BindView(R.id.date_label)
-    TextView dateLabel;
     @BindView(R.id.dateBtn)
     Button dateBtn;
     @BindView(R.id.timeBtn)
     Button timeBtn;
-    @BindView(R.id.time_label)
-    TextView timeLabel;
-    @BindView(R.id.trip_name)
-    TextInputLayout tripName;
     @BindView(R.id.noteText)
     TextInputEditText noteText;
-    @BindView(R.id.roundTrip)
-    CheckBox roundTrip;
+    //@BindView(R.id.roundTrip)
+    //CheckBox roundTrip;
     @BindView(R.id.addNoteBtn)
     Button addNoteBtn;
     @BindView(R.id.recycleView)
     RecyclerView recycleView;
+    @BindView(R.id.include_toolbar)
+    Toolbar includeToolbar;
+    @BindView(R.id.btn_cancel_trip)
+    AppCompatButton btnCancelTrip;
+    @BindView(R.id.roundTrip)
+    CheckBox roundTrip;
+    @BindView(R.id.cardView)
+    CardView cardView;
+    @BindView(R.id.linearLayout)
+    LinearLayout linearLayout;
 
     Date dateOne;
-    String date;
+    String date, tripName;
+    String startLat, endLat;
+    String startLong, endLong;
+    String startLocationName;
+    String endLocationName;
+
+
     int year1;
     int month1;
     int day1;
-    boolean flag = false;
-    RecyclerView recyclerView;
+    boolean flag = false, isFlag = false,startPlaceSelected = false,endPlaceSelected = false,isDateChosen = false,isTimeChosen = false;
+    boolean tripType;
+    Long correctDate , correctTime;
+
     AddingNotesAdapter addingNotesAdapter;
     List<NoteModel> noteModels;
+    NoteModel noteModel;
     RecyclerView.LayoutManager recyclerViewLayoutManager;
     LinearLayoutManager verticalLayout;
+    TripModel tripModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,14 +101,27 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
         setContentView(R.layout.activity_add_trip);
         ButterKnife.bind(this);
 
-        recyclerViewLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(recyclerViewLayoutManager);
-
-
-
+        ///////////////////// UI ////////////////
         // set button underlined
         addNoteBtn.setPaintFlags(addNoteBtn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        //// date and time part
+        //include bar title
+        includeToolbar.setTitle(R.string.addTrip);
+        includeToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        includeToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        //////////////////////////////////////////
+
+
+        noteModels = new ArrayList<>();
+        recyclerViewLayoutManager = new LinearLayoutManager(getApplicationContext());
+
+
+        ///////////////// date and time part
         dateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,7 +134,7 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
                 );
                 dpd.show(getFragmentManager(), "Datepickerdialog");
                 dpd.setVersion(DatePickerDialog.Version.VERSION_2);
-                dpd.setAccentColor(getResources().getColor(colorAccent));
+                dpd.setAccentColor(getResources().getColor(colorPrimary));
 
 
             }
@@ -118,13 +154,13 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
                         false
                 );
                 tpd.show(getFragmentManager(), "Timepickerdialog");
-                tpd.setAccentColor(getResources().getColor(colorAccent));
+                tpd.setAccentColor(getResources().getColor(colorPrimary));
 
             }
         });
-        //// end of date and time
+        ///////////////////////////// end of date and time
 
-        /// autoComplete Search by Google
+        ///////////////////////////// autoComplete Search by Google
         PlaceAutocompleteFragment startAutoCompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.startPlace_autocomplete_fragment);
         startAutoCompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -135,6 +171,12 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
                 Log.i("latitude", Double.toString(latLng.latitude));
                 Log.i("longtitude", Double.toString(latLng.longitude));
                 Log.i("h", "Place: " + place.getName());
+
+                startLat = Double.toString(latLng.latitude);
+                startLong = Double.toString(latLng.longitude);
+                startLocationName = (String) place.getName();
+                startPlaceSelected = true;
+
             }
 
             @Override
@@ -149,7 +191,13 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
+                LatLng latLng = place.getLatLng();
+
                 Log.i("h", "Place: " + place.getName());
+                endLat = Double.toString(latLng.latitude);
+                endLong = Double.toString(latLng.longitude);
+                endLocationName = (String) place.getName();
+                endPlaceSelected = true;
             }
 
             @Override
@@ -158,28 +206,88 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
                 Log.i("i", "An error occurred: " + status);
             }
         });
-        //// end of autoComplete Section
-        /// notes Section
+        /////////////////////////////////// end of autoComplete Section
+
+        //////////////////////////////////// notes Section
         addNoteBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 String noteData = String.valueOf(noteText.getText());
-                if (noteData != null) {
+                if (!noteData.isEmpty()) {
 
                     addNotesToRecyclerViewList(noteData);
+                    isFlag = true;
+
+                    addingNotesAdapter = new AddingNotesAdapter(AddTripActivity.this, noteModels);
+                    verticalLayout = new LinearLayoutManager(AddTripActivity.this, LinearLayoutManager.VERTICAL, false);
+                    recycleView.setLayoutManager(verticalLayout);
+
+                    recycleView.setAdapter(addingNotesAdapter);
 
 
                 }
             }
         });
+        btnAddTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                tripName = inputName.getText().toString();
+                Random r = new Random(); // make a random number of the trip id
+                int min = 1, max = 62000;
+                int trip1Id = r.nextInt(max - min + 1) + min; //id
+
+                // validation
+                if(!inputName.getText().toString().isEmpty() && startPlaceSelected && endPlaceSelected && isDateChosen && isTimeChosen ){
+
+
+                    if(roundTrip.isChecked()){
+                        tripType = true;
+                    }else{
+                        tripType = false;
+                    }
+                    tripModel = new TripModel(trip1Id,tripName,correctDate ,correctTime,startLat,startLong,startLocationName,endLat,endLong,endLocationName,tripType, ConstantsVariables.TRIP_UPCOMMING_STATE,noteModels);
+                    FirebaseHelper.getInstance().addTrip(tripModel, FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "Choose all data please", Toast.LENGTH_SHORT).show();
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            }
+        });
+        btnCancelTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
+    ///////////// notes
     private void addNotesToRecyclerViewList(String noteData) {
+        noteModel = new NoteModel();
+        noteModel.setBody(noteData);
+        noteModels.add(noteModel);
 
     }
+    ////////////////////////
 
-
+    ///////////////// date and time
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
@@ -187,20 +295,34 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
         month1 = monthOfYear;
         day1 = dayOfMonth;
         flag = true;
-        dateLabel.setText(date);
+        isDateChosen = true;
+        dateBtn.setText(date);
 
     }
 
     @Override
     public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-        String time = hourOfDay + "h" + minute + "m" + second;
+        String time = hourOfDay + ":" + minute + ":" + second;
         if (flag == true) {
+            long currentTime = System.currentTimeMillis();
             dateOne = new Date(year1, month1, day1, hourOfDay, minute, second);
+            if (currentTime == dateOne.getTime()) {
+                //add to trip object
+                correctDate = (long) dateOne.getDate();
+                correctTime = dateOne.getTime();
+                isTimeChosen = true;
+
+            } else {
+                Toast.makeText(getApplicationContext(), "Choose valid date", Toast.LENGTH_SHORT).show();
+            }
+
         } else {
             Toast.makeText(getApplicationContext(), "Please Choose Date first", Toast.LENGTH_SHORT).show();
         }
-        timeLabel.setText(time);
+
+        timeBtn.setText(time);
 
     }
-
+    //////////////////////// end of date and time
 }
+

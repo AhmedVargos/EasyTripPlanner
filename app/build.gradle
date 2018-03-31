@@ -8,6 +8,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
+       // vectorDrawables.useSupportLibrary = true // dh el satr eli 2alo nzwdo
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -17,7 +18,7 @@ android {
         }
     }
 }
-
+//garrab tshel el satr eli ana 7ateto kda afta7e
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:26.1.0'

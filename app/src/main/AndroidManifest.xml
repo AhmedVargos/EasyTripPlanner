@@ -19,9 +19,8 @@
         android:largeHeap="true">
         <activity android:name=".ui.activities.SplashScreenActivity"
             android:theme="@style/SplashTheme"
-            android:screenOrientation="portrait">
-            <intent-filter>
-        android:theme="@style/AppTheme">
+            android:screenOrientation="portrait"/>
+
         <activity android:name=".ui.activities.LoginActivity">
 
         </activity>
@@ -33,17 +32,12 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".ui.activities.LoginActivity">
 
-        </activity>
         <activity android:name=".ui.activities.HomeActivity" />
         <activity android:name=".ui.activities.TripDetails">
 
         </activity>
-        <activity android:name=".ui.activities.HomeActivity" />
-        <activity android:name=".ui.activities.TripDetails">
 
-        </activity>
         <activity
             android:name=".ui.activities.TripDialogActivity"
             android:excludeFromRecents="true"
