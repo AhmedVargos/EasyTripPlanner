@@ -173,8 +173,8 @@ public class TripDialogActivity extends AppCompatActivity {
         String originLoc = tripStarted.getStartLat() + "," + tripStarted.getStartLang();
         String distLoc = tripStarted.getEndLat() + "," + tripStarted.getEndLang();
 
-        //String URL = "https://www.google.com/maps/dir/?api=1&origin=" + originLoc + "&destination=" + distLoc;
-        String URL = "https://www.google.com/maps/dir/?api=1&origin=31.200092,29.918739&destination=30.04442,31.235712";
+        String URL = "https://www.google.com/maps/dir/?api=1&origin=" + originLoc + "&destination=" + distLoc;
+        //String URL = "https://www.google.com/maps/dir/?api=1&origin=31.200092,29.918739&destination=30.04442,31.235712";
 
         Uri location = Uri.parse(URL);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);

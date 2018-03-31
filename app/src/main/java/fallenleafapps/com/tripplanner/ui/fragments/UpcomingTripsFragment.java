@@ -2,7 +2,10 @@ package fallenleafapps.com.tripplanner.ui.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -31,10 +34,14 @@ import fallenleafapps.com.tripplanner.models.NoteModel;
 import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.ui.activities.AddTripActivity;
+import fallenleafapps.com.tripplanner.ui.activities.TripDialogActivity;
 import fallenleafapps.com.tripplanner.ui.adapters.TripRecyclerAdapter;
 import fallenleafapps.com.tripplanner.ui.listeners.TripCardListener;
+import fallenleafapps.com.tripplanner.ui.services.FloatingWidgetService;
 import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
 import fallenleafapps.com.tripplanner.utils.Functions;
+
+import static android.app.Activity.RESULT_OK;
 
 public class UpcomingTripsFragment extends Fragment implements TripCardListener {
 
@@ -44,6 +51,8 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     Unbinder unbinder;
     @BindView(R.id.btn_add_trip)
     FloatingActionButton btnAddTrip;
+
+    private static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
 
     private ArrayList<TripModel> tripsUpComming = new ArrayList<>();
     private boolean deleteFromDetail = false;
@@ -72,7 +81,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
                 }
             } else if (trip.getTripStatus() == ConstantsVariables.TRIP_CANCELD_STATE || trip.getTripStatus() == ConstantsVariables.TRIP_DONE_STATE) {
                 tripRecyclerAdapter.removeTripWithoutPos(trip);
-                deleteTripFromTheUpcomming(trip);
+//                deleteTripFromTheUpcomming(trip);
             }
         }
         @Override
@@ -98,6 +107,8 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
 
         }
     };
+    private TripModel myStartedTrip;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,7 +175,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
         deleteFromDetail = true;
         Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(),fallenleafapps.com.tripplanner.ui.activities.TripDetails.class);
-        intent.putExtra(ConstantsVariables.TRIP_OBJ,trip);
+        intent.putExtra(ConstantsVariables.TRIP_OBJ, trip);
         startActivity(intent);
     }
 
@@ -186,10 +197,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
         morphingButton.morph(circle);
         morphingButton.setEnabled(false);
 
-        //TODO open the maps and start the notes widget
-        trip.setTripStatus(ConstantsVariables.TRIP_STARTED_STATE);
-        FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).child(trip.getTripFirebaseId()).setValue(trip);
-        //Functions.scheduleAlarm(getContext(), trip);
+        openTheStartTripActions(trip);
         Functions.unschedulePendingIntent(getContext(), trip);
     }
 
@@ -209,7 +217,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
                     public void onClick(DialogInterface dialog, int id) {
                         FirebaseHelper.getInstance().deleteTrip(trip, userId);
                         //if(trip.getTripStatus() == ConstantsVariables.TRIP_UPCOMMING_STATE){ // FOR removing just the upcoming trips from schedule
-                            Functions.unschedulePendingIntent(getContext(),trip);
+                            Functions.unschedulePendingIntent(getContext(), trip);
                         //}
 
                         tripRecyclerAdapter.removeTrip(trip,pos);
@@ -237,6 +245,65 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
             }
         }
         tripsUpComming.remove(pos);
+    }
+
+    private void openTheStartTripActions(TripModel trip){
+        myStartedTrip = trip;
+        lunchMapDirectionToLocation(myStartedTrip);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(getActivity())) {
+            //If the draw over permission is not available open the settings screen
+            //to grant the permission.
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getActivity().getPackageName()));
+            startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+        } else {
+            initializeView(myStartedTrip);
+        }
+    }
+
+    public void lunchMapDirectionToLocation(TripModel tripStarted){
+
+        String originLoc = tripStarted.getStartLat() + "," + tripStarted.getStartLang();
+        String distLoc = tripStarted.getEndLat() + "," + tripStarted.getEndLang();
+
+        String URL = "https://www.google.com/maps/dir/?api=1&origin=" + originLoc + "&destination=" + distLoc;
+        //String URL = "https://www.google.com/maps/dir/?api=1&origin=31.200092,29.918739&destination=30.04442,31.235712";
+
+        Uri location = Uri.parse(URL);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
+        startActivity(mapIntent);
+        //change the trip state
+        tripStarted.setTripStatus(ConstantsVariables.TRIP_STARTED_STATE);
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).child(tripStarted.getTripFirebaseId()).setValue(tripStarted);
+
+    }
+
+
+    private void initializeView(TripModel trip) {
+
+        Intent i=new Intent(getActivity(), FloatingWidgetService.class);
+        i.putExtra(ConstantsVariables.TRIP_OBJ, trip);
+        getActivity().startService(i);
+        // finish();
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CODE_DRAW_OVER_OTHER_APP_PERMISSION) {
+            //Check if the permission is granted or not.
+            if (resultCode == RESULT_OK) {
+                initializeView(myStartedTrip);
+            } else { //Permission is not available
+                Toast.makeText(getActivity(),
+                        "Draw over other app permission not available. Closing the application",
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
     @Override
     public void onDestroy() {

@@ -3,7 +3,9 @@ package fallenleafapps.com.tripplanner.ui.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -35,6 +38,7 @@ import fallenleafapps.com.tripplanner.models.NoteModel;
 import fallenleafapps.com.tripplanner.models.TripModel;
 import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 import fallenleafapps.com.tripplanner.ui.adapters.NotesAdapter;
+import fallenleafapps.com.tripplanner.ui.services.FloatingWidgetService;
 import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
 import fallenleafapps.com.tripplanner.utils.Functions;
 
@@ -63,7 +67,7 @@ public class TripDetails extends AppCompatActivity {
     @BindView(R.id.endlocation)
     TextView endlocation;
 
-
+    private static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
     List<NoteModel> noteModels;
     RecyclerView.LayoutManager RecyclerViewLayoutManager;
     NotesAdapter notesAdapter;
@@ -268,7 +272,17 @@ public class TripDetails extends AppCompatActivity {
                             //finish();
                         }else{
                             lunchMapDirectionToLocation(displayedTrip);
-                            updateTheTripStatus(displayedTrip,ConstantsVariables.TRIP_STARTED_STATE);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(TripDetails.this)) {
+                                //If the draw over permission is not available open the settings screen
+                                //to grant the permission.
+                                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                        Uri.parse("package:" + TripDetails.this.getPackageName()));
+                                startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+                            } else {
+                                initializeView(displayedTrip);
+                            }
+
+                            //updateTheTripStatus(displayedTrip,ConstantsVariables.TRIP_STARTED_STATE);
                             //finish();
                         }
                         dialog.cancel();
@@ -291,13 +305,38 @@ public class TripDetails extends AppCompatActivity {
         String originLoc = tripStarted.getStartLat() + "," + tripStarted.getStartLang();
         String distLoc = tripStarted.getEndLat() + "," + tripStarted.getEndLang();
 
-        //String URL = "https://www.google.com/maps/dir/?api=1&origin=" + originLoc + "&destination=" + distLoc;
-        String URL = "https://www.google.com/maps/dir/?api=1&origin=31.200092,29.918739&destination=30.04442,31.235712";
+        String URL = "https://www.google.com/maps/dir/?api=1&origin=" + originLoc + "&destination=" + distLoc;
+        //String URL = "https://www.google.com/maps/dir/?api=1&origin=31.200092,29.918739&destination=30.04442,31.235712";
 
         Uri location = Uri.parse(URL);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
         startActivity(mapIntent);
 
+    }
+
+    private void initializeView(TripModel trip) {
+
+        Intent i=new Intent(this, FloatingWidgetService.class);
+        i.putExtra(ConstantsVariables.TRIP_OBJ, trip);
+        startService(i);
+        // finish();
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CODE_DRAW_OVER_OTHER_APP_PERMISSION) {
+            //Check if the permission is granted or not.
+            if (resultCode == RESULT_OK) {
+                initializeView(displayedTrip);
+            } else { //Permission is not available
+                Toast.makeText(this,
+                        "Draw over other app permission not available. Closing the application",
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void updateTheTripStatus(TripModel trip , int state){
