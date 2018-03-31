@@ -35,6 +35,8 @@ public class PastTripsFragment extends Fragment implements TripCardListener {
     @BindView(R.id.fragment_past_trips_recycler)
     RecyclerView fragmentPastTripsRecycler;
     Unbinder unbinder;
+
+    private boolean deleteFromDetail = false;
     private String userId;
     private TripRecyclerAdapter tripRecyclerAdapter;
     private ChildEventListener childEventListener = new ChildEventListener() {
@@ -51,11 +53,22 @@ public class PastTripsFragment extends Fragment implements TripCardListener {
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            TripModel trip = dataSnapshot.getValue(TripModel.class);
+
+            if(trip.getTripStatus() == ConstantsVariables.TRIP_CANCELD_STATE || trip.getTripStatus() == ConstantsVariables.TRIP_DONE_STATE ) {
+                tripRecyclerAdapter.addNewTrip(dataSnapshot.getValue(TripModel.class));
+            }
         }
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+            if(deleteFromDetail){
+                TripModel trip = dataSnapshot.getValue(TripModel.class);
+                if(trip.getTripStatus() == ConstantsVariables.TRIP_CANCELD_STATE || trip.getTripStatus() == ConstantsVariables.TRIP_DONE_STATE ){
+                    //tripsList.add(trip);
+                    tripRecyclerAdapter.removeTripWithoutPos(trip);
+                }
+            }
         }
 
         @Override
@@ -86,6 +99,13 @@ public class PastTripsFragment extends Fragment implements TripCardListener {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        deleteFromDetail = false;
+
+    }
+
     private void setupRecycler() {
 
         tripRecyclerAdapter = new TripRecyclerAdapter(getActivity(),this,1);
@@ -101,6 +121,7 @@ public class PastTripsFragment extends Fragment implements TripCardListener {
 
     @Override
     public void openTripDetails(TripModel trip) {
+        deleteFromDetail = true;
         Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(),fallenleafapps.com.tripplanner.ui.activities.TripDetails.class);
         intent.putExtra(ConstantsVariables.TRIP_OBJ,trip);

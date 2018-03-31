@@ -19,7 +19,10 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import fallenleafapps.com.tripplanner.models.TripModel;
+import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 import fallenleafapps.com.tripplanner.ui.services.TripIntentService;
 import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
 import fallenleafapps.com.tripplanner.utils.FeedBackActionsListeners;
@@ -159,6 +162,11 @@ public class TripDialogActivity extends AppCompatActivity {
         Uri location = Uri.parse(URL);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
         startActivity(mapIntent);
+        //change the trip state
+        tripStarted.setTripStatus(ConstantsVariables.TRIP_STARTED_STATE);
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).child(tripStarted.getTripFirebaseId()).setValue(tripStarted);
+
     }
 
     private void makeNotification(Context context, TripModel trip) {

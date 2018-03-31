@@ -181,7 +181,7 @@ public class StatisticsFragment extends Fragment {
         });
 
         // the animation will run for 1.0 seconds:
-        animator.setDuration(1500);
+        animator.setDuration(1000);
         animator.start();
     }
 

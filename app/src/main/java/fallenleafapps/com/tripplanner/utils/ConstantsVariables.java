@@ -12,10 +12,12 @@ public class ConstantsVariables {
     public static final String DIALOG_TYPE = "TYPE";
 
     //Trip status
+    public static final int TRIP_STARTED_STATE = 0;
     public static final int TRIP_UPCOMMING_STATE = 1;
     public static final int TRIP_DONE_STATE = 2;
     public static final int TRIP_CANCELD_STATE = 3;
 
+    public static final String TRIP_STARTED_TEXT = "Started";
     public static final String TRIP_UPCOMMING_TEXT = "Upcoming";
     public static final String TRIP_DONE_TEXT = "Done";
     public static final String TRIP_CANCELD_TEXT = "Canceled";

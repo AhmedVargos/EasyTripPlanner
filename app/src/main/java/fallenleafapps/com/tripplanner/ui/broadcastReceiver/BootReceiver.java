@@ -23,7 +23,7 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-            //TODO LOOP through all the upcomming trips and set it's alarm
+            //TODO LOOP through all the upcoming trips and set it's alarm
             // Set alarms
 
             FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();

@@ -1,19 +1,27 @@
 package fallenleafapps.com.tripplanner.ui.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,6 +33,7 @@ import butterknife.ButterKnife;
 import fallenleafapps.com.tripplanner.R;
 import fallenleafapps.com.tripplanner.models.NoteModel;
 import fallenleafapps.com.tripplanner.models.TripModel;
+import fallenleafapps.com.tripplanner.network.FirebaseHelper;
 import fallenleafapps.com.tripplanner.ui.adapters.NotesAdapter;
 import fallenleafapps.com.tripplanner.utils.ConstantsVariables;
 
@@ -65,7 +74,35 @@ public class TripDetails extends AppCompatActivity {
     @BindView(R.id.trip_type)
     TextView tripType;
     private TripModel displayedTrip;
+    private String userId;
+    private ChildEventListener childEventListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            Log.e("test", "onChildAdded: " );
+        }
 
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            finish();
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            finish();
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            Log.e("test", "onChildAdded: " );
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.e("test", "onChildAdded: " );
+
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +129,7 @@ public class TripDetails extends AppCompatActivity {
         toolbar.setTitle(displayedTrip.getTripName() + " Details");
         setSupportActionBar(toolbar);
 
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String statusText;
         switch (displayedTrip.getTripStatus()) {
             case ConstantsVariables.TRIP_UPCOMMING_STATE:
@@ -102,6 +140,9 @@ public class TripDetails extends AppCompatActivity {
                 break;
             case ConstantsVariables.TRIP_CANCELD_STATE:
                 statusText = ConstantsVariables.TRIP_CANCELD_TEXT;
+                break;
+            case ConstantsVariables.TRIP_STARTED_STATE:
+                statusText = ConstantsVariables.TRIP_STARTED_TEXT;
                 break;
             default:
                 statusText = "Unknown";
@@ -162,15 +203,18 @@ public class TripDetails extends AppCompatActivity {
 
                     case 0:
                         //start trip
-                        break;
+                        makeAnAlert(1);
+                          break;
                     case 1:
                         //done trip
+                        updateTheTripStatus(displayedTrip,ConstantsVariables.TRIP_DONE_STATE);
                         break;
                     case 2:
                         //edit trip
                         break;
                     case 3:
                         //delete trip
+                        makeAnAlert(0);
                         break;
 
 
@@ -185,6 +229,86 @@ public class TripDetails extends AppCompatActivity {
             }
         });
 
+        if (displayedTrip.getTripStatus() == ConstantsVariables.TRIP_STARTED_STATE) {
+            bottomNavigation.disableItemAtPosition(0);
+        }
+
+        FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).addChildEventListener(childEventListener);
+
     }
 
+    private void makeAnAlert(final int action){
+        String title;
+        String message;
+        switch (action){
+            case 0:
+                title = "Delete";
+                message = "Are you sure you want to delete it?";
+                break;
+            case 1:
+                title = "Start";
+                message = "Are you sure you want to Start the trip?";
+                break;
+            default:
+                title = "Delete";
+                message = "Are you sure you want to delete it?";
+        }
+
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+        builder1.setTitle(title);
+        builder1.setMessage(message);
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if(action == 0){
+                            FirebaseHelper.getInstance().deleteTrip(displayedTrip, userId);
+
+                            //finish();
+                        }else{
+                            lunchMapDirectionToLocation(displayedTrip);
+                            updateTheTripStatus(displayedTrip,ConstantsVariables.TRIP_STARTED_STATE);
+                            //finish();
+                        }
+                        dialog.cancel();
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
+    }
+    public void lunchMapDirectionToLocation(TripModel tripStarted){
+
+        String originLoc = tripStarted.getStartLat() + "," + tripStarted.getStartLang();
+        String distLoc = tripStarted.getEndLat() + "," + tripStarted.getEndLang();
+
+        //String URL = "https://www.google.com/maps/dir/?api=1&origin=" + originLoc + "&destination=" + distLoc;
+        String URL = "https://www.google.com/maps/dir/?api=1&origin=31.200092,29.918739&destination=30.04442,31.235712";
+
+        Uri location = Uri.parse(URL);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
+        startActivity(mapIntent);
+
+    }
+
+    private void updateTheTripStatus(TripModel trip , int state){
+        trip.setTripStatus(state);
+        FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).child(trip.getTripFirebaseId()).setValue(trip);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).removeEventListener(childEventListener);
+    }
 }
