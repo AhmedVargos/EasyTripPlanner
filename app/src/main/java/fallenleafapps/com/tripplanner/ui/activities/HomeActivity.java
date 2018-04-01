@@ -120,7 +120,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         HomeFragment homeFragment = new HomeFragment();
         Functions.changeMainFragment(this,homeFragment);
     }
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -140,7 +140,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         return false;
     }
-
+*/
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();

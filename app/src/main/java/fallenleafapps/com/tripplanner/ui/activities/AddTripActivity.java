@@ -1,8 +1,11 @@
 package fallenleafapps.com.tripplanner.ui.activities;
 
 
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
@@ -84,9 +87,9 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
     int year1;
     int month1;
     int day1;
-    boolean flag = false, isFlag = false,startPlaceSelected = false,endPlaceSelected = false,isDateChosen = false,isTimeChosen = false;
+    boolean flag = false, isFlag = false, startPlaceSelected = false, endPlaceSelected = false, isDateChosen = false, isTimeChosen = false;
     boolean tripType;
-    Long correctDate , correctTime;
+    Long correctDate, correctTime;
 
     AddingNotesAdapter addingNotesAdapter;
     List<NoteModel> noteModels;
@@ -94,7 +97,10 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
     RecyclerView.LayoutManager recyclerViewLayoutManager;
     LinearLayoutManager verticalLayout;
     TripModel tripModel;
-
+    TripModel oldTripModel;
+    @BindView(R.id.add_main_layout)
+    LinearLayout addMainLayout;
+    private int isEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,11 +108,28 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
         setContentView(R.layout.activity_add_trip);
         ButterKnife.bind(this);
 
+        ////////////CHICK IF EDIT//////////////
+        isEdit = getIntent().getIntExtra("IS_EDIT", 0);
+        if (isEdit == 1) {
+            oldTripModel = getIntent().getParcelableExtra(ConstantsVariables.TRIP_OBJ);
+        } else {
+            oldTripModel = null;
+        }
+        if (!Functions.isInternetConnected(this)) {
+            Snackbar snackbar = Snackbar.make(addMainLayout, "No Internet Connection !", Snackbar.LENGTH_LONG);
+            snackbar.getView().getBackground().setColorFilter(Color.RED, PorterDuff.Mode.ADD);
+            snackbar.show();
+        }
         ///////////////////// UI ////////////////
         // set button underlined
         addNoteBtn.setPaintFlags(addNoteBtn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         //include bar title
-        includeToolbar.setTitle(R.string.addTrip);
+        if (isEdit != 1) {
+
+            includeToolbar.setTitle(R.string.addTrip);
+        } else {
+            includeToolbar.setTitle(oldTripModel.getTripName());
+        }
         includeToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         includeToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,31 +253,55 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
                 }
             }
         });
+        if (isEdit == 1) {
+            btnAddTrip.setText("Save Edits");
+        } else {
+            btnAddTrip.setText("Add Trip");
+        }
         btnAddTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                tripName = inputName.getText().toString();
-                Random r = new Random(); // make a random number of the trip id
-                int min = 1, max = 62000;
-                int trip1Id = r.nextInt(max - min + 1) + min; //id
-
-                // validation
-                if(!inputName.getText().toString().isEmpty() && startPlaceSelected && endPlaceSelected && isDateChosen && isTimeChosen ){
+                if (isEdit == 1) {
+                    tripName = inputName.getText().toString();
+                    // validation
+                    if (!inputName.getText().toString().isEmpty() && startPlaceSelected && endPlaceSelected && isDateChosen && isTimeChosen) {
 
 
-                    if(roundTrip.isChecked()){
-                        tripType = true;
-                    }else{
-                        tripType = false;
+                        if (roundTrip.isChecked()) {
+                            tripType = true;
+                        } else {
+                            tripType = false;
+                        }
+                        tripModel = new TripModel(oldTripModel.getTripId(), tripName, correctDate, correctTime, startLat, startLong, startLocationName, endLat, endLong, endLocationName, tripType, ConstantsVariables.TRIP_UPCOMMING_STATE, noteModels, oldTripModel.getTripFirebaseId());
+                        FirebaseHelper.getInstance().updateTrip(tripModel, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        Functions.scheduleAlarm(AddTripActivity.this, tripModel);
+                        finish();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Fill all data please", Toast.LENGTH_SHORT).show();
                     }
-                    tripModel = new TripModel(trip1Id,tripName,correctDate ,correctTime,startLat,startLong,startLocationName,endLat,endLong,endLocationName,tripType, ConstantsVariables.TRIP_UPCOMMING_STATE,noteModels);
-                    FirebaseHelper.getInstance().addTrip(tripModel, FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    Functions.scheduleAlarm(AddTripActivity.this, tripModel);
-                    finish();
-                }
-                else{
-                    Toast.makeText(getApplicationContext(), "Fill all data please", Toast.LENGTH_SHORT).show();
+                } else {
+                    tripName = inputName.getText().toString();
+                    Random r = new Random(); // make a random number of the trip id
+                    int min = 1, max = 62000;
+                    int trip1Id = r.nextInt(max - min + 1) + min; //id
+
+                    // validation
+                    if (!inputName.getText().toString().isEmpty() && startPlaceSelected && endPlaceSelected && isDateChosen && isTimeChosen) {
+
+
+                        if (roundTrip.isChecked()) {
+                            tripType = true;
+                        } else {
+                            tripType = false;
+                        }
+                        tripModel = new TripModel(trip1Id, tripName, correctDate, correctTime, startLat, startLong, startLocationName, endLat, endLong, endLocationName, tripType, ConstantsVariables.TRIP_UPCOMMING_STATE, noteModels);
+                        FirebaseHelper.getInstance().addTrip(tripModel, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        Functions.scheduleAlarm(AddTripActivity.this, tripModel);
+                        finish();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Fill all data please", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
             }
@@ -265,6 +312,13 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
                 finish();
             }
         });
+
+
+        if (isEdit == 1) {
+            //fill all the views
+            fillAllViews();
+        }
+
     }
 
     ///////////// notes
@@ -294,11 +348,11 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
         String time = hourOfDay + ":" + minute + ":" + second;
         if (flag == true) {
             long currentTime = Calendar.getInstance().getTime().getTime();
-            dateOne = getDate(year1,month1,day1,hourOfDay,minute,second);
+            dateOne = getDate(year1, month1, day1, hourOfDay, minute, second);
 
-            Log.e("Add trip", "onTimeSet: " + currentTime );
-            Log.e("Add trip", "Selected date " + dateOne.getTime() );
-            Log.e("Add trip", "diff : " +  (dateOne.getTime()-currentTime)  );
+            Log.e("Add trip", "onTimeSet: " + currentTime);
+            Log.e("Add trip", "Selected date " + dateOne.getTime());
+            Log.e("Add trip", "diff : " + (dateOne.getTime() - currentTime));
 
             if (currentTime < dateOne.getTime()) {
                 //add to trip object
@@ -330,5 +384,34 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
         return cal.getTime();
     }
     //////////////////////// end of date and time
+
+    //fill all views for edit
+    private void fillAllViews() {
+
+        inputName.setText(oldTripModel.getTripName());
+        if (oldTripModel.isTripType()) {
+            roundTrip.setChecked(true);
+        }
+
+        PlaceAutocompleteFragment startAutoCompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.startPlace_autocomplete_fragment);
+        startAutoCompleteFragment.setText(oldTripModel.getStartLocationName());
+
+        startLat = oldTripModel.getStartLat();
+        startLong = oldTripModel.getStartLang();
+        startLocationName = oldTripModel.getStartLocationName();
+        startPlaceSelected = true;
+
+        PlaceAutocompleteFragment endAutoCompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.endPlace_autocomplete_fragment);
+        endAutoCompleteFragment.setText(oldTripModel.getEndLocationName());
+
+        endLat = oldTripModel.getEndLat();
+        endLong = oldTripModel.getEndLang();
+        endLocationName = oldTripModel.getEndLocationName();
+        endPlaceSelected = true;
+
+        noteModels.addAll(oldTripModel.getNotes());
+    }
 }
 

@@ -1,8 +1,10 @@
 package fallenleafapps.com.tripplanner.ui.fragments;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -127,7 +129,6 @@ public class PastTripsFragment extends Fragment implements TripCardListener {
     @Override
     public void openTripDetails(TripModel trip) {
         deleteFromDetail = true;
-        Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(),fallenleafapps.com.tripplanner.ui.activities.TripDetails.class);
         intent.putExtra(ConstantsVariables.TRIP_OBJ,trip);
         startActivity(intent);
@@ -135,8 +136,41 @@ public class PastTripsFragment extends Fragment implements TripCardListener {
 
     @Override
     public void deleteTrip(TripModel trip,int pos) {
-        FirebaseHelper.getInstance().deleteTrip(trip, userId);
-        tripRecyclerAdapter.removeTrip(trip,pos);
+        makeAnAlert(trip,pos); //ask for deletion
+    }
+    private void makeAnAlert(final TripModel trip, final int pos){
+        String title = "Delete";
+        String message = "Are you sure you want to delete it?";
+
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
+        builder1.setTitle(title);
+        builder1.setMessage(message);
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        FirebaseHelper.getInstance().deleteTrip(trip, userId);
+                        //if(trip.getTripStatus() == ConstantsVariables.TRIP_UPCOMMING_STATE){ // FOR removing just the upcoming trips from schedule
+                        Functions.unschedulePendingIntent(getContext(), trip);
+                        //}
+
+                        tripRecyclerAdapter.removeTrip(trip,pos);
+                        dialog.cancel();
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
     }
 
     @Override

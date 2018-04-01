@@ -111,6 +111,8 @@ public class HistoryFragment extends Fragment implements OnMapReadyCallback {
 
             connectionContainer.setVisibility(View.VISIBLE);
             fragmentHistoryMap.setVisibility(View.GONE);
+            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         }
 
         return view;

@@ -219,6 +219,7 @@ public class TripDetails extends AppCompatActivity {
                         break;
                     case 2:
                         //edit trip
+                        openEditTrip(displayedTrip);
                         break;
                     case 3:
                         //delete trip
@@ -399,6 +400,15 @@ public class TripDetails extends AppCompatActivity {
         FirebaseHelper.getInstance().deleteTrip(trip, userId);
 
 
+    }
+
+    private void openEditTrip(TripModel tripModel){
+
+        Intent intent = new Intent(this,AddTripActivity.class);
+        intent.putExtra("IS_EDIT",1);
+        intent.putExtra(ConstantsVariables.TRIP_OBJ, tripModel);
+        startActivity(intent);
+        finish();
     }
     @Override
     protected void onDestroy() {

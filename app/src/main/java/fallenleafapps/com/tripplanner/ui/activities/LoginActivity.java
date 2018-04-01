@@ -172,8 +172,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signIn() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        if (!isNetworkAvailable()) {
+            Snackbar snackbar = Snackbar.make(layout, "No Internet Connection !", Snackbar.LENGTH_LONG);
+            snackbar.getView().getBackground().setColorFilter(Color.RED, PorterDuff.Mode.ADD);
+            snackbar.show();
+        } else {
+            showProgressDialog();
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        }
+
     }
 
     @Override
@@ -188,9 +196,26 @@ public class LoginActivity extends AppCompatActivity {
                 if (task.isSuccess()) {
                     GoogleSignInAccount account = task.getSignInAccount();
                     firebaseAuthWithGoogle(account);
+                }else {
+                    if (!isNetworkAvailable()) {
+                        Snackbar snackbar = Snackbar.make(layout, "No Internet Connection !", Snackbar.LENGTH_LONG);
+                        snackbar.getView().getBackground().setColorFilter(Color.RED, PorterDuff.Mode.ADD);
+                        snackbar.show();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+
+                    }
                 }
             } catch (Exception e) {
                 // Google Sign In failed, update UI appropriately
+                if (!isNetworkAvailable()) {
+                    Snackbar snackbar = Snackbar.make(layout, "No Internet Connection !", Snackbar.LENGTH_LONG);
+                    snackbar.getView().getBackground().setColorFilter(Color.RED, PorterDuff.Mode.ADD);
+                    snackbar.show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+
+                }
                 Log.w("hello", "Google sign in failed", e);
             }
         }

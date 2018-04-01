@@ -129,22 +129,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
         btnAddTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* Toast.makeText(getActivity(), "Open Add New Trip", Toast.LENGTH_SHORT).show();
-                Random r = new Random(); // make a random number of the trip id
-                int min = 1, max = 62000;
-                int trip1Id = r.nextInt(max - min + 1) + min;
-                int trip2Id = r.nextInt(max - min + 1) + min;
-
-                TripModel trip1 = new TripModel(trip1Id,"First Trip", new Long(12225), new Long(42556), "30.044420", "31.235712", "Cairo", "30.013056", "31.208853", "Giza", true, 1, new ArrayList<NoteModel>());
-                TripModel trip2 = new TripModel(trip2Id,"Third Trip", new Long(12225), new Long(42556), "24.088938", "32.899829", "Asuan", "30.013056", "31.208853", "Giza", true, 2, new ArrayList<NoteModel>());
-
-                trip1.addNote(new NoteModel(2,"hello this the first note",true));
-                trip1.addNote(new NoteModel(3,"hello this the second note",true));
-                trip2.addNote(new NoteModel(2,"hello this the first note",true));
-                trip2.addNote(new NoteModel(3,"hello this the second note",true));
-                FirebaseHelper.getInstance().addTrip(trip1,FirebaseAuth.getInstance().getCurrentUser().getUid());
-                FirebaseHelper.getInstance().addTrip(trip2,FirebaseAuth.getInstance().getCurrentUser().getUid());*/
-               startActivity(new Intent(getActivity(), AddTripActivity.class));
+                  startActivity(new Intent(getActivity(), AddTripActivity.class));
             }
         });
         return view;

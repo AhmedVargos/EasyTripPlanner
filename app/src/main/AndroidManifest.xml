@@ -27,30 +27,31 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.activities.LoginActivity">
+        <activity android:name=".ui.activities.LoginActivity" android:screenOrientation="portrait">
 
         </activity>
-        <activity android:name=".ui.activities.AddTripActivity">
+        <activity android:name=".ui.activities.AddTripActivity" android:screenOrientation="portrait">
 
 
         </activity>
 
-        <activity android:name=".ui.activities.HomeActivity" />
-        <activity android:name=".ui.activities.TripDetails">
+        <activity android:name=".ui.activities.HomeActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.activities.TripDetails" android:screenOrientation="portrait">
 
         </activity>
 
         <activity
             android:name=".ui.activities.TripDialogActivity"
             android:excludeFromRecents="true"
-            android:theme="@style/CustomDialogActivity"/>
+            android:theme="@style/CustomDialogActivity"
+            android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.activities.SignUpActivity"></activity>
+        <activity android:name=".ui.activities.SignUpActivity" android:screenOrientation="portrait"></activity>
         <service
             android:name=".ui.services.TripIntentService"
-            android:exported="false"/>
+            android:exported="false" android:screenOrientation="portrait"/>
 
-        <receiver android:name=".ui.broadcastReceiver.BootReceiver"  android:directBootAware="true">
+        <receiver android:name=".ui.broadcastReceiver.BootReceiver"  android:directBootAware="true" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
                 <!-- For pre-Nougat devices -->
@@ -77,7 +78,8 @@
         <service
             android:name="fallenleafapps.com.tripplanner.ui.services.FloatingWidgetService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
 
     </application>
 

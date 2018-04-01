@@ -128,7 +128,12 @@ public class TripDialogActivity extends AppCompatActivity {
                         if (type.equals(ConstantsVariables.DIALOG_TYPE_WITH_MUSIC)) {
                             r.stop();
                         }
-                        //TODO CHANGE THE STATUS OF THE TRIP MODEL
+                        // CHANGE THE STATUS OF THE TRIP MODEL
+                        trip.setTripStatus(ConstantsVariables.TRIP_CANCELD_STATE);
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                        FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).child(trip.getTripFirebaseId()).setValue(trip);
+
                         finish();
                     }
 
