@@ -59,14 +59,16 @@ public class TripRecyclerAdapter extends RecyclerView.Adapter<TripRecyclerAdapte
         notifyItemRangeChanged(pos,tripsList.size());
     }
     public void removeTripWithoutPos(TripModel tripModel){
-        int pos = 0;
+        int pos = -1;
         for (int i=0; i < tripsList.size(); i++){
            if( tripsList.get(i).getTripFirebaseId().equals(tripModel.getTripFirebaseId())){
                pos = i;
            }
         }
 
-        tripsList.remove(pos);
+        if(pos != -1){
+            tripsList.remove(pos);
+        }
         notifyDataSetChanged();
     }
     public void clearListOfTrips(){

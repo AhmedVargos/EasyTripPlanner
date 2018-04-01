@@ -60,6 +60,8 @@ public class PastTripsFragment extends Fragment implements TripCardListener {
             }else if (trip.getTripStatus() == ConstantsVariables.TRIP_UPCOMMING_STATE) {
                 tripRecyclerAdapter.removeTripWithoutPos(trip);
 //                deleteTripFromTheUpcomming(trip);
+            }else if(trip.getTripStatus() == ConstantsVariables.TRIP_STARTED_STATE){
+                tripRecyclerAdapter.removeTripWithoutPos(trip);
             }
         }
 

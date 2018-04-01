@@ -77,7 +77,7 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
             if (trip.getTripStatus() == ConstantsVariables.TRIP_UPCOMMING_STATE || trip.getTripStatus() == ConstantsVariables.TRIP_STARTED_STATE) {
                 tripRecyclerAdapter.changeTrip(dataSnapshot.getValue(TripModel.class));
                 if(trip.getTripStatus() == ConstantsVariables.TRIP_STARTED_STATE){
-                    deleteTripFromTheUpcomming(trip);
+//                    deleteTripFromTheUpcomming(trip);
                 }
             } else if (trip.getTripStatus() == ConstantsVariables.TRIP_CANCELD_STATE || trip.getTripStatus() == ConstantsVariables.TRIP_DONE_STATE) {
                 tripRecyclerAdapter.removeTripWithoutPos(trip);
@@ -173,7 +173,6 @@ public class UpcomingTripsFragment extends Fragment implements TripCardListener 
     @Override
     public void openTripDetails(TripModel trip) {
         deleteFromDetail = true;
-        Toast.makeText(getActivity(), trip.getTripName() + " Is clicked", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(getActivity(),fallenleafapps.com.tripplanner.ui.activities.TripDetails.class);
         intent.putExtra(ConstantsVariables.TRIP_OBJ, trip);
         startActivity(intent);

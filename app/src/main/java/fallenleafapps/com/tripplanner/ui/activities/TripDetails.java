@@ -27,9 +27,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -154,7 +156,7 @@ public class TripDetails extends AppCompatActivity {
         if(displayedTrip.isTripType()){
             tripType.setText(ConstantsVariables.TRIP_TYPE_ROUND_TRIP);
         }else{
-            tripType.setText(ConstantsVariables.TRIP_TYPE_ROUND_TRIP);
+            tripType.setText(ConstantsVariables.TRIP_TYPE_SINGLE_TYME);
         }
 
         tripname.setText(displayedTrip.getTripName());
@@ -209,7 +211,11 @@ public class TripDetails extends AppCompatActivity {
                           break;
                     case 1:
                         //done trip
-                        updateTheTripStatus(displayedTrip,ConstantsVariables.TRIP_DONE_STATE);
+                        if(displayedTrip.isTripType()) {
+                            startReturnTripAfterFinish(displayedTrip);
+                        }else{
+                            updateTheTripStatus(displayedTrip, ConstantsVariables.TRIP_DONE_STATE);
+                        }
                         break;
                     case 2:
                         //edit trip
@@ -233,6 +239,8 @@ public class TripDetails extends AppCompatActivity {
 
         if (displayedTrip.getTripStatus() == ConstantsVariables.TRIP_STARTED_STATE) {
             bottomNavigation.disableItemAtPosition(0);
+        }else if(displayedTrip.getTripStatus() == ConstantsVariables.TRIP_DONE_STATE || displayedTrip.getTripStatus() == ConstantsVariables.TRIP_CANCELD_STATE){
+            bottomNavigation.disableItemAtPosition(1);
         }
 
         FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).addChildEventListener(childEventListener);
@@ -282,7 +290,7 @@ public class TripDetails extends AppCompatActivity {
                                 initializeView(displayedTrip);
                             }
 
-                            //updateTheTripStatus(displayedTrip,ConstantsVariables.TRIP_STARTED_STATE);
+                            updateTheTripStatus(displayedTrip,ConstantsVariables.TRIP_STARTED_STATE);
                             //finish();
                         }
                         dialog.cancel();
@@ -344,6 +352,54 @@ public class TripDetails extends AppCompatActivity {
         FirebaseHelper.getInstance().getFirebaseDatabase().child("trips").child(userId).child(trip.getTripFirebaseId()).setValue(trip);
     }
 
+    private void startReturnTripAfterFinish(TripModel trip){
+        TripModel returnTrip = new TripModel();
+        //setting the return trip
+        returnTrip.setTripName(trip.getTripName() + " Return");
+
+        returnTrip.setStartLocationName(trip.getEndLocationName());
+        returnTrip.setStartLang(trip.getEndLang());
+        returnTrip.setStartLat(trip.getEndLat());
+
+        returnTrip.setEndLocationName(trip.getStartLocationName());
+        returnTrip.setEndLang(trip.getStartLang());
+        returnTrip.setEndLat(trip.getStartLat());
+
+        returnTrip.setTripStatus(ConstantsVariables.TRIP_STARTED_STATE);
+        returnTrip.setTripType(false);
+
+        returnTrip.setNotes(trip.getNotes());
+        Random r = new Random(); // make a random number of the trip id
+        int min = 1, max = 62000;
+        int trip1Id = r.nextInt(max - min + 1) + min; //id
+        returnTrip.setTripId(trip1Id);
+
+        returnTrip.setTripTime(Calendar.getInstance().getTime().getTime() + 1000);
+        returnTrip.setTripDate(Calendar.getInstance().getTime().getTime() + 1000);
+
+        //add new one and start it
+        lunchMapDirectionToLocation(returnTrip);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(TripDetails.this)) {
+            //If the draw over permission is not available open the settings screen
+            //to grant the permission.
+            displayedTrip = returnTrip;
+            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + TripDetails.this.getPackageName()));
+            startActivityForResult(intent, CODE_DRAW_OVER_OTHER_APP_PERMISSION);
+        } else {
+            initializeView(returnTrip);
+        }
+
+        //Add new one
+        FirebaseHelper.getInstance().addTrip(returnTrip, FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+
+        //remove old trip
+        Functions.unschedulePendingIntent(TripDetails.this,trip);
+        FirebaseHelper.getInstance().deleteTrip(trip, userId);
+
+
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
