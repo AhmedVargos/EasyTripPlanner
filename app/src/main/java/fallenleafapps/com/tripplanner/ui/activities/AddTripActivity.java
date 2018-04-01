@@ -143,6 +143,9 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
 
 
         noteModels = new ArrayList<>();
+        if(isEdit == 1){
+            noteModels.addAll(tripModel.getNotes());
+        }
         recyclerViewLayoutManager = new LinearLayoutManager(getApplicationContext());
 
 
