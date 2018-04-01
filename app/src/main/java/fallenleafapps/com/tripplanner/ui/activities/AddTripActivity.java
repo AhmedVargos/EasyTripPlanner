@@ -143,10 +143,18 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
 
 
         noteModels = new ArrayList<>();
+
         if(isEdit == 1){
-            noteModels.addAll(tripModel.getNotes());
+            noteModels.addAll(oldTripModel.getNotes());
+        //    addingNotesAdapter.notifyDataSetChanged();
         }
+
         recyclerViewLayoutManager = new LinearLayoutManager(getApplicationContext());
+        addingNotesAdapter = new AddingNotesAdapter(AddTripActivity.this, noteModels);
+        verticalLayout = new LinearLayoutManager(AddTripActivity.this, LinearLayoutManager.VERTICAL, false);
+        recycleView.setLayoutManager(verticalLayout);
+
+        recycleView.setAdapter(addingNotesAdapter);
 
 
         ///////////////// date and time part
@@ -327,6 +335,8 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
             //fill all the views
             fillAllViews();
         }
+
+
 
     }
 
