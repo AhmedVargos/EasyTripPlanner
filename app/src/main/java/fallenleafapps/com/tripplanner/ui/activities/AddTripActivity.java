@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -185,6 +186,8 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
         ///////////////////////////// end of date and time
 
         ///////////////////////////// autoComplete Search by Google
+        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder().setCountry("EG").build();
+
         PlaceAutocompleteFragment startAutoCompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.startPlace_autocomplete_fragment);
         startAutoCompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -209,6 +212,8 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
                 Log.i("i", "An error occurred: " + status);
             }
         });
+        startAutoCompleteFragment.setFilter(typeFilter);
+
         PlaceAutocompleteFragment endAutoCompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.endPlace_autocomplete_fragment);
         endAutoCompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -230,6 +235,7 @@ public class AddTripActivity extends AppCompatActivity implements TimePickerDial
                 Log.i("i", "An error occurred: " + status);
             }
         });
+        endAutoCompleteFragment.setFilter(typeFilter);
         /////////////////////////////////// end of autoComplete Section
 
         //////////////////////////////////// notes Section
