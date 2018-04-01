@@ -164,7 +164,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }else if(id == R.id.nav_logout){
             removeAllAlarms();
             drawerLayout.closeDrawer(GravityCompat.START);
-            Toast.makeText(this, "IS logged out", Toast.LENGTH_SHORT).show();
             //removeAllAlarms();
             //FirebaseHelper.getInstance().getFirebaseDatabase().
             FirebaseAuth.getInstance().signOut();
